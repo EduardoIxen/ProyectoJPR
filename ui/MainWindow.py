@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import Tk, Entry, Menu, messagebox, filedialog, ttk, Label, scrolledtext, INSERT, END, Button, Scrollbar, RIGHT, Y, HORIZONTAL, VERTICAL, simpledialog
 from ui.Editor import ScrollText
+from grammar import ejecutar
 
 class MainWindow():
     def __init__(self):
@@ -28,8 +29,8 @@ class MainWindow():
         self.root.config(menu=menuBar)
 
         #Botones correr y debug
-        self.txtConsola = Entry(self.root, width=10)
-        self.btnInterpretar = Button(self.root, text="Interpretar", bg='red')
+        self.textConsola = Entry(self.root, width=10)
+        self.btnInterpretar = Button(self.root, text="Interpretar", bg='red', command=self.btn_run)
         self.btnDebug = Button(self.root, text="Debugger", bg='red')
 
         #Creación de editores
@@ -81,3 +82,11 @@ class MainWindow():
         fguardar.write(self.txt.get(1.0, END))
         fguardar.close()
         self.fileName = guardar
+
+    def btn_run(self):
+        entrada = ""
+        entrada = self.txt.get("1.0", END)
+        print(entrada)
+        salidaConsola = ejecutar(entrada)
+        self.textConsola.delete("1.0", END)
+        self.textConsola.insert("1.0", salidaConsola)
