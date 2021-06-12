@@ -7,8 +7,11 @@ from TS.Excepcion import Excepcion
 errores = []
 reservadas = {
     'int'   : 'RINT',
-    'float' : 'RFLOAT',
+    'double' : 'RDOUBLE',
+    'boolean': 'RBOOLEAN',
+    'char' : 'RCHAR',
     'string': 'RSTRING',
+    'null' : 'RNULL',
     'print' : 'RPRINT',
 }
 
@@ -59,10 +62,18 @@ def t_CADENA(t):
     t.value = t.value[1:-1] # remuevo las comillas
     return t
 
+def t_COMENTARIO_MULTI(t):
+    #r'(?s)\#\*.*?\*\#'
+    #r'/\*(.|\n)*?\*/'
+    #r'\#\*(.|\n)*?\*\#'
+    r'\#\*(.|\n)*\*\#'
+    t.lexer.lineno += 1
+
 # Comentario simple // ...
 def t_COMENTARIO_SIMPLE(t):
     r'\#.*\n'
     t.lexer.lineno += 1
+
 
 # Caracteres ignorados
 t_ignore = " \t"
