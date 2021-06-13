@@ -4,6 +4,7 @@
 '''
 from tkinter.constants import NO
 from TS.Excepcion import Excepcion
+import re
 
 errores = []
 reservadas = {
@@ -31,8 +32,9 @@ tokens  = [
     'MENORQUE', #Operadores relacionales
     'MAYORQUE',
     'IGUALIGUAL',
-    'IGUAL', #Operadores logicos
-    'OR',
+    'DIFERENTE',
+    'IGUAL', 
+    'OR', #Operadores logicos
     'AND',
     'NOT',
     'DECIMAL', #datos
@@ -55,6 +57,7 @@ t_MODULO        = r'\%'
 t_MENORQUE      = r'<' # Relacionales
 t_MAYORQUE      = r'>'
 t_IGUALIGUAL    = r'=='
+t_DIFERENTE     = r'!='
 t_IGUAL         = r'='
 t_AND           = r'&&' #Logicos
 t_OR            = r'\|\|'
@@ -79,7 +82,8 @@ def t_ENTERO(t):
     return t
 
 def t_CADENA(t):
-    r'(\".*\")'
+    #r'(\".*?\")'
+    r'\"([^\\\"]|\\.)*\"'
     t.value = t.value[1:-1] # remuevo las comillas
     return t
 
@@ -143,7 +147,7 @@ lexer = lex.lex()
 precedence = (
     ('left','OR'),
     ('left','AND'),
-    ('left','MENORQUE','MAYORQUE', 'IGUALIGUAL'),
+    ('left','MENORQUE','MAYORQUE', 'IGUALIGUAL', 'DIFERENTE'),
     ('left','MAS','MENOS'),
     ('left', 'POR', 'DIV', 'MODULO'),
     ('right', 'POTENCIA'),
@@ -157,8 +161,9 @@ precedence = (
 from Abstract.Instruccion import Instruccion
 from Instrucciones.Imprimir import Imprimir
 from Expresiones.Primitivos import Primitivos
-from TS.Tipo import OperadorAritmetico, TIPO
+from TS.Tipo import OperadorAritmetico, OperadorRelacional, TIPO
 from Expresiones.Aritmetica import Aritmetica
+from Expresiones.Relacional import Relacional
 
 def p_init(t) :
     'init            : instrucciones'
@@ -210,6 +215,9 @@ def p_expresion_binaria(t):
             | expresion DIV expresion
             | expresion POTENCIA expresion
             | expresion MODULO  expresion
+            | expresion IGUALIGUAL expresion
+            | expresion DIFERENTE expresion
+            | expresion MENORQUE expresion
     '''
     if t[2] == '+':
         t[0] = Aritmetica(OperadorAritmetico.MAS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
@@ -223,6 +231,10 @@ def p_expresion_binaria(t):
         t[0] = Aritmetica(OperadorAritmetico.POT, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == "%":
         t[0] = Aritmetica(OperadorAritmetico.MOD, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == "==":
+        t[0] = Relacional(OperadorRelacional.IGUALIGUAL, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == "!=":
+        t[0] = Relacional(OperadorRelacional.DIFERENTE, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
         
 
 def p_expresion_unaria(t):
@@ -275,7 +287,7 @@ def parse(inp) :
     global lexer
     global parser
     errores = []
-    lexer = lex.lex()
+    lexer = lex.lex(reflags=re.IGNORECASE)
     parser = yacc.yacc()
     global input
     input = inp
