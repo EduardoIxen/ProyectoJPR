@@ -31,6 +31,8 @@ tokens  = [
     'MODULO',
     'MENORQUE', #Operadores relacionales
     'MAYORQUE',
+    'MENORIGUAL',
+    'MAYORIGUAL',
     'IGUALIGUAL',
     'DIFERENTE',
     'IGUAL', 
@@ -56,6 +58,8 @@ t_POTENCIA      = r'\*\*'
 t_MODULO        = r'\%'
 t_MENORQUE      = r'<' # Relacionales
 t_MAYORQUE      = r'>'
+t_MENORIGUAL    = r'<='
+t_MAYORIGUAL    = r'>='
 t_IGUALIGUAL    = r'=='
 t_DIFERENTE     = r'!='
 t_IGUAL         = r'='
@@ -147,7 +151,7 @@ lexer = lex.lex()
 precedence = (
     ('left','OR'),
     ('left','AND'),
-    ('left','MENORQUE','MAYORQUE', 'IGUALIGUAL', 'DIFERENTE'),
+    ('left','MENORQUE','MAYORQUE', 'MENORIGUAL', 'MAYORIGUAL', 'IGUALIGUAL', 'DIFERENTE'),
     ('left','MAS','MENOS'),
     ('left', 'POR', 'DIV', 'MODULO'),
     ('right', 'POTENCIA'),
@@ -218,6 +222,9 @@ def p_expresion_binaria(t):
             | expresion IGUALIGUAL expresion
             | expresion DIFERENTE expresion
             | expresion MENORQUE expresion
+            | expresion MAYORQUE expresion
+            | expresion MENORIGUAL expresion
+            | expresion MAYORIGUAL expresion
     '''
     if t[2] == '+':
         t[0] = Aritmetica(OperadorAritmetico.MAS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
@@ -235,7 +242,14 @@ def p_expresion_binaria(t):
         t[0] = Relacional(OperadorRelacional.IGUALIGUAL, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == "!=":
         t[0] = Relacional(OperadorRelacional.DIFERENTE, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
-        
+    elif t[2] == "<":
+        t[0] = Relacional(OperadorRelacional.MENORQUE, t[1],t[3],t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == ">":
+        t[0] = Relacional(OperadorRelacional.MAYORQUE, t[1],t[3],t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == "<=":
+        t[0] = Relacional(OperadorRelacional.MENORIGUAL, t[1],t[3],t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == ">=":
+        t[0] = Relacional(OperadorRelacional.MAYORIGUAL, t[1],t[3],t.lineno(2), find_column(input, t.slice[2]))
 
 def p_expresion_unaria(t):
     '''
