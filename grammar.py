@@ -2,6 +2,7 @@
     GRAMATICA PLY
     EDUARDO_IXEN
 '''
+from tkinter.constants import NO
 from TS.Excepcion import Excepcion
 
 errores = []
@@ -13,26 +14,51 @@ reservadas = {
     'string': 'RSTRING',
     'null' : 'RNULL',
     'print' : 'RPRINT',
+    'true'  : 'RTRUE',
+    'false' : 'RFALSE',
 }
 
 tokens  = [
-    'PUNTOCOMA',
+    'PUNTOCOMA', #signos
     'PARA',
     'PARC',
-    'MAS',
+    'MAS', #operadores aritmeticos
     'MENOS',
-    'DECIMAL',
+    'POR',
+    'DIV',
+    'POTENCIA',
+    'MODULO',
+    'MENORQUE', #Operadores relacionales
+    'MAYORQUE',
+    'IGUALIGUAL',
+    'IGUAL', #Operadores logicos
+    'OR',
+    'AND',
+    'NOT',
+    'DECIMAL', #datos
     'ENTERO',
     'CADENA',
+    'CARACTER',
     'ID'
 ] + list(reservadas.values())
 
 # Tokens
-t_PUNTOCOMA     = r';'
+t_PUNTOCOMA     = r';'  #signos
 t_PARA          = r'\('
 t_PARC          = r'\)'
-t_MAS           = r'\+'
-t_MENOS           = r'-'
+t_MAS           = r'\+' #aritmeticos
+t_MENOS         = r'-'
+t_POR           = r'\*'
+t_DIV           = r'/'
+t_POTENCIA      = r'\*\*'
+t_MODULO        = r'\%'
+t_MENORQUE      = r'<' # Relacionales
+t_MAYORQUE      = r'>'
+t_IGUALIGUAL    = r'=='
+t_IGUAL         = r'='
+t_AND           = r'&&' #Logicos
+t_OR            = r'\|\|'
+t_NOT           = r'!'
 
 def t_DECIMAL(t):
     r'\d+\.\d+'
@@ -52,15 +78,21 @@ def t_ENTERO(t):
         t.value = 0
     return t
 
+def t_CADENA(t):
+    r'(\".*\")'
+    t.value = t.value[1:-1] # remuevo las comillas
+    return t
+
+def t_CARACTER(t):
+    r'(\'([^\\\"]|\\.)\')'
+    t.value = t.value[1:-1]
+    return t
+
 def t_ID(t):
      r'[a-zA-Z][a-zA-Z_0-9]*'
      t.type = reservadas.get(t.value.lower(),'ID')
      return t
 
-def t_CADENA(t):
-    r'(\".*?\")'
-    t.value = t.value[1:-1] # remuevo las comillas
-    return t
 
 def t_COMENTARIO_MULTI(t):
     #r'(?s)\#\*.*?\*\#'
@@ -93,10 +125,30 @@ def find_column(inp, token):
     line_start = inp.rfind('\n', 0, token.lexpos) + 1
     return (token.lexpos - line_start) + 1
 
+def especiales(cadena):
+    cadena = cadena.replace('\\n', '\n')
+    cadena = cadena.replace('\\"', '\"')
+    cadena = cadena.replace('\\t', '        ')
+    cadena = cadena.replace("\\'","\'")
+    cadena = cadena.replace('\\\\', '\\')
+    cadena = cadena.replace('\\r', '\r')
+    return cadena
+
 # Construyendo el analizador léxico
 import ply.lex as lex
 lexer = lex.lex()
 
+
+# Asociación de operadores y precedencia
+precedence = (
+    ('left','OR'),
+    ('left','AND'),
+    ('left','MENORQUE','MAYORQUE', 'IGUALIGUAL'),
+    ('left','MAS','MENOS'),
+    ('left', 'POR', 'DIV', 'MODULO'),
+    ('right', 'POTENCIA'),
+    ('right','UMENOS'),
+)
 
 
 # Definición de la gramática
@@ -130,8 +182,13 @@ def p_instrucciones_instruccion(t) :
 #///////////////////////////////////////INSTRUCCION//////////////////////////////////////////////////
 
 def p_instruccion(t) :
-    '''instruccion      : imprimir_instr'''
+    '''instruccion      : imprimir_instr finins'''
     t[0] = t[1]
+
+def p_finins(t) :
+    '''finins       : PUNTOCOMA
+                    |'''
+    t[0] = None
 
 def p_instruccion_error(t):
     'instruccion        : error PUNTOCOMA'
@@ -140,7 +197,7 @@ def p_instruccion_error(t):
 #///////////////////////////////////////IMPRIMIR//////////////////////////////////////////////////
 
 def p_imprimir(t) :
-    'imprimir_instr     : RPRINT PARA expresion PARC PUNTOCOMA'
+    'imprimir_instr     : RPRINT PARA expresion PARC'
     t[0] = Imprimir(t[3], t.lineno(1), find_column(input, t.slice[1]))
 
 #///////////////////////////////////////EXPRESION//////////////////////////////////////////////////
@@ -149,12 +206,37 @@ def p_expresion_binaria(t):
     '''
     expresion : expresion MAS expresion
             | expresion MENOS expresion
+            | expresion POR expresion
+            | expresion DIV expresion
+            | expresion POTENCIA expresion
+            | expresion MODULO  expresion
     '''
     if t[2] == '+':
         t[0] = Aritmetica(OperadorAritmetico.MAS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '-':
         t[0] = Aritmetica(OperadorAritmetico.MENOS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '*':
+        t[0] = Aritmetica(OperadorAritmetico.POR, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == "/":
+        t[0] = Aritmetica(OperadorAritmetico.DIV, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == "**":
+        t[0] = Aritmetica(OperadorAritmetico.POT, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == "%":
+        t[0] = Aritmetica(OperadorAritmetico.MOD, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
+        
 
+def p_expresion_unaria(t):
+    '''
+    expresion : MENOS expresion %prec UMENOS
+    '''
+    if t[1] == "-":
+        t[0] = Aritmetica(OperadorAritmetico.UMENOS, t[2], None, t.lineno(1), find_column(input, t.slice[1]))
+
+def p_expresion_agrupacion(t):
+    '''
+    expresion :   PARA expresion PARC 
+    '''
+    t[0] = t[2]
 
 def p_expresion_entero(t):
     '''expresion : ENTERO'''
@@ -166,7 +248,19 @@ def p_primitivo_decimal(t):
 
 def p_primitivo_cadena(t):
     '''expresion : CADENA'''
-    t[0] = Primitivos(TIPO.CADENA,str(t[1]).replace('\\n', '\n'), t.lineno(1), find_column(input, t.slice[1]))
+    t[0] = Primitivos(TIPO.CADENA, especiales(str(t[1])), t.lineno(1), find_column(input, t.slice[1]))
+
+def p_primitivo_char(t):
+    '''expresion :  CARACTER'''
+    t[0] = Primitivos(TIPO.CHARACTER, especiales(str(t[1])), t.lineno(1), find_column(input, t.slice[1]))
+
+def p_primitivo_true(t):
+    '''expresion :  RTRUE'''
+    t[0] = Primitivos(TIPO.BOOLEANO, True, t.lineno(1), find_column(input, t.slice[1]))
+
+def p_primitivo_false(t):
+    '''expresion :  RFALSE'''
+    t[0] = Primitivos(TIPO.BOOLEANO, False, t.lineno(1), find_column(input, t.slice[1]))
 
 import ply.yacc as yacc
 parser = yacc.yacc()
