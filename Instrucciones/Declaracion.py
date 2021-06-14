@@ -25,7 +25,7 @@ class Declaracion(Instruccion):
             if isinstance(result, Excepcion): return result
             return None
         else:
-            value = "null"
+            value = "null"  #asignamos null porque no tiene la expresion definida
             tipo = TIPO.NULO
 
             if isinstance(value, Excepcion): return value

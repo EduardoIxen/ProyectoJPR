@@ -20,12 +20,18 @@ reservadas = {
     'false' : 'RFALSE',
     'var'   : 'RVAR',
     'null'  : 'RNULL',
+    'if'    : 'RIF',
+    'else'  : 'RELSE',
+    'while' : 'RWHILE',
+    'break' : 'RBREAK',
 }
 
 tokens  = [
     'PUNTOCOMA', #signos
     'PARA',
     'PARC',
+    'LLAVEA',
+    'LLAVEC',
     'MAS', #operadores aritmeticos
     'MENOS',
     'POR',
@@ -53,6 +59,8 @@ tokens  = [
 t_PUNTOCOMA     = r';'  #signos
 t_PARA          = r'\('
 t_PARC          = r'\)'
+t_LLAVEA        = r'{'
+t_LLAVEC        = r'}'
 t_MAS           = r'\+' #aritmeticos
 t_MENOS         = r'-'
 t_POR           = r'\*'
@@ -176,6 +184,9 @@ from Expresiones.Logica import Logica
 from Instrucciones.Declaracion import Declaracion
 from Expresiones.Identificador import Identificador
 from Instrucciones.Asignacion import Asignacion
+from Instrucciones.If import If
+from Instrucciones.While import While
+from Instrucciones.Break import Break
 
 def p_init(t) :
     'init            : instrucciones'
@@ -202,6 +213,9 @@ def p_instruccion(t) :
     '''instruccion      : imprimir_instr finins
                         | declaracion_instr finins
                         | asignacion_instr finins
+                        | if_instr
+                        | while_instr
+                        | break_instr finins
     '''
     t[0] = t[1]
 
@@ -236,6 +250,34 @@ def p_asignacion(t):
     '''asignacion_instr : ID IGUAL expresion
     '''
     t[0] = Asignacion(t[1], t[3], t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////////IF//////////////////////////////////////////////////////
+
+def p_if1(t) :
+    'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC'
+    t[0] = If(t[3], t[6], None, None, t.lineno(1), find_column(input, t.slice[1]))
+
+def p_if2(t) :
+    'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE LLAVEA instrucciones LLAVEC'
+    t[0] = If(t[3], t[6], t[10], None, t.lineno(1), find_column(input, t.slice[1]))
+
+def p_if3(t) :
+    'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE if_instr'
+    t[0] = If(t[3], t[6], None, t[9], t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////WHILE//////////////////////////////////////////////////
+
+def p_while(t):
+    '''while_instr : RWHILE PARA expresion PARC LLAVEA instrucciones LLAVEC
+    '''
+    t[0] = While(t[3], t[6], t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////BREAK//////////////////////////////////////////////////
+
+def p_break(t):
+    '''break_instr : RBREAK
+    '''
+    t[0] = Break(t.lineno(1), find_column(input, t.slice[1]))
     
 #///////////////////////////////////////EXPRESION//////////////////////////////////////////////////
 
@@ -372,6 +414,28 @@ def ejecutar(entrada):
         if isinstance(value, Excepcion) :
             ast.getExcepciones().append(value)
             ast.updateConsola(value.toString())
+        if isinstance(value, Break) :
+            err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo.", instruccion.fila, instruccion.columna)
+            ast.getExcepciones().append(err)
+            ast.updateConsola(err.toString())
+        
 
     return ast.getConsola()
-    
+
+'''
+for instruccion in ast.getInstrucciones():      # REALIZAR LAS ACCIONES (primera pasada)
+    if isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion) or \
+        isinstance(instruccion, Funcion)
+        value = instruccion.interpretar(ast,TSGlobal)
+        if isinstance(value, Excepcion) :
+            ast.getExcepciones().append(value)
+            ast.updateConsola(value.toString())
+
+for instruccion in ast.getInstrucciones():      # REALIZAR LAS ACCIONES (segunda pasada)
+    if isinstance(instruccion, Declaracion) or not isinstance(instruccion, Asignacion) or not\
+        isinstance(instruccion, Funcion)
+        value = instruccion.interpretar(ast,TSGlobal)
+        if isinstance(value, Excepcion) :
+            ast.getExcepciones().append(value)
+            ast.updateConsola(value.toString())
+'''
