@@ -120,6 +120,7 @@ class Relacional(Instruccion):
             elif self.OperacionIzq.tipo == TIPO.BOOLEANO and self.OperacionDer.tipo == TIPO.BOOLEANO:
                 return self.obtenerVal(self.OperacionIzq.tipo, izq) >= self.obtenerVal(self.OperacionDer.tipo, der)
             return Excepcion("Semantico", f"Error en la comparacion de {str(izq)} ({self.OperacionIzq.tipo}) y {str(der)}({self.OperacionDer.tipo}).", self.fila, self.columna)
+        return Excepcion("Semantico", "Tipo de Operacion no Especificado.", self.fila, self.columna)
 
     def obtenerVal(self, tipo, val):
         if tipo == TIPO.ENTERO:

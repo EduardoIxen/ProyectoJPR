@@ -2,6 +2,7 @@
     GRAMATICA PLY
     EDUARDO_IXEN
 '''
+from Instrucciones.Declaracion import Declaracion
 from tkinter.constants import NO
 from TS.Excepcion import Excepcion
 import re
@@ -17,6 +18,8 @@ reservadas = {
     'print' : 'RPRINT',
     'true'  : 'RTRUE',
     'false' : 'RFALSE',
+    'var'   : 'RVAR',
+    'null'  : 'RNULL',
 }
 
 tokens  = [
@@ -151,6 +154,7 @@ lexer = lex.lex()
 precedence = (
     ('left','OR'),
     ('left','AND'),
+    ('right', 'UNOT'),
     ('left','MENORQUE','MAYORQUE', 'MENORIGUAL', 'MAYORIGUAL', 'IGUALIGUAL', 'DIFERENTE'),
     ('left','MAS','MENOS'),
     ('left', 'POR', 'DIV', 'MODULO'),
@@ -165,9 +169,13 @@ precedence = (
 from Abstract.Instruccion import Instruccion
 from Instrucciones.Imprimir import Imprimir
 from Expresiones.Primitivos import Primitivos
-from TS.Tipo import OperadorAritmetico, OperadorRelacional, TIPO
+from TS.Tipo import OperadorAritmetico, OperadorLogico, OperadorRelacional, TIPO
 from Expresiones.Aritmetica import Aritmetica
 from Expresiones.Relacional import Relacional
+from Expresiones.Logica import Logica
+from Instrucciones.Declaracion import Declaracion
+from Expresiones.Identificador import Identificador
+from Instrucciones.Asignacion import Asignacion
 
 def p_init(t) :
     'init            : instrucciones'
@@ -191,7 +199,10 @@ def p_instrucciones_instruccion(t) :
 #///////////////////////////////////////INSTRUCCION//////////////////////////////////////////////////
 
 def p_instruccion(t) :
-    '''instruccion      : imprimir_instr finins'''
+    '''instruccion      : imprimir_instr finins
+                        | declaracion_instr finins
+                        | asignacion_instr finins
+    '''
     t[0] = t[1]
 
 def p_finins(t) :
@@ -209,6 +220,23 @@ def p_imprimir(t) :
     'imprimir_instr     : RPRINT PARA expresion PARC'
     t[0] = Imprimir(t[3], t.lineno(1), find_column(input, t.slice[1]))
 
+#///////////////////////////////////////DECLARACION//////////////////////////////////////////////////
+def p_declaracion(t):
+    '''declaracion_instr : RVAR ID IGUAL expresion
+                        | RVAR ID
+    '''
+
+    if len(t) == 5:
+        t[0] = Declaracion(t[2], t.lineno(1), find_column(input, t.slice[1]), t[4])
+    else:
+        t[0] = Declaracion(t[2], t.lineno(1), find_column(input, t.slice[1]), None)
+
+#///////////////////////////////////////ASIGNACION//////////////////////////////////////////////////
+def p_asignacion(t):
+    '''asignacion_instr : ID IGUAL expresion
+    '''
+    t[0] = Asignacion(t[1], t[3], t.lineno(1), find_column(input, t.slice[1]))
+    
 #///////////////////////////////////////EXPRESION//////////////////////////////////////////////////
 
 def p_expresion_binaria(t):
@@ -225,6 +253,8 @@ def p_expresion_binaria(t):
             | expresion MAYORQUE expresion
             | expresion MENORIGUAL expresion
             | expresion MAYORIGUAL expresion
+            | expresion OR expresion
+            | expresion AND expresion
     '''
     if t[2] == '+':
         t[0] = Aritmetica(OperadorAritmetico.MAS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
@@ -250,19 +280,31 @@ def p_expresion_binaria(t):
         t[0] = Relacional(OperadorRelacional.MENORIGUAL, t[1],t[3],t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == ">=":
         t[0] = Relacional(OperadorRelacional.MAYORIGUAL, t[1],t[3],t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == "||":
+        t[0] = Logica(OperadorLogico.OR, t[1],t[3],t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == "&&":
+        t[0] = Logica(OperadorLogico.AND, t[1],t[3],t.lineno(2), find_column(input, t.slice[2]))
+    
 
 def p_expresion_unaria(t):
     '''
     expresion : MENOS expresion %prec UMENOS
+                | NOT expresion %prec UNOT
     '''
     if t[1] == "-":
         t[0] = Aritmetica(OperadorAritmetico.UMENOS, t[2], None, t.lineno(1), find_column(input, t.slice[1]))
+    elif t[1] == "!":
+        t[0] = Logica(OperadorLogico.NOT, t[2], None, t.lineno(1), find_column(input, t.slice[1]))
 
 def p_expresion_agrupacion(t):
     '''
     expresion :   PARA expresion PARC 
     '''
     t[0] = t[2]
+
+def p_expresion_identificador(t):
+    '''expresion : ID'''
+    t[0] = Identificador(t[1], t.lineno(1), find_column(input, t.slice[1]))
 
 def p_expresion_entero(t):
     '''expresion : ENTERO'''
@@ -287,6 +329,10 @@ def p_primitivo_true(t):
 def p_primitivo_false(t):
     '''expresion :  RFALSE'''
     t[0] = Primitivos(TIPO.BOOLEANO, False, t.lineno(1), find_column(input, t.slice[1]))
+
+def p_nulo(t):
+    'expresion : RNULL'
+    t[0] = Primitivos(TIPO.NULO, "null",t.lineno(1), find_column(input, t.slice[1]))
 
 import ply.yacc as yacc
 parser = yacc.yacc()
@@ -327,8 +373,5 @@ def ejecutar(entrada):
             ast.getExcepciones().append(value)
             ast.updateConsola(value.toString())
 
-    print("comienzo")
-    print(ast.getConsola())
-    print("Func")
     return ast.getConsola()
     
