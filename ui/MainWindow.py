@@ -3,6 +3,7 @@ from tkinter import Tk, Entry, Menu, messagebox, filedialog, ttk, Label, scrolle
 from ui.Editor import ScrollText
 from grammar import ejecutar
 
+
 class MainWindow():
     def __init__(self):
         title = 'JPR EDITOR'
@@ -15,14 +16,14 @@ class MainWindow():
         #Menu bar
         menuBar = Menu(self.root)
         fileMenu = Menu(menuBar, tearoff=0)
-        fileMenu.add_command(label="Crear Archivo", command=self.new_file)
-        fileMenu.add_command(label="Abrir Archivo", command=self.open_file)
-        fileMenu.add_command(label="Guardar", command=self.save_file)
-        fileMenu.add_command(label="Guardar Como", command=self.saveAs_file)
-        menuBar.add_cascade(label="Archivo", menu=fileMenu)
+        fileMenu.add_command(label="Crear Archivo", command = self.new_file)
+        fileMenu.add_command(label="Abrir Archivo", command = self.open_file)
+        fileMenu.add_command(label="Guardar", command = self.save_file)
+        fileMenu.add_command(label="Guardar Como", command = self.saveAs_file)
+        menuBar.add_cascade(label="Archivo", menu = fileMenu)
 
         reportMenu = Menu(menuBar, tearoff=0)
-        reportMenu.add_command(label="Reporte De Errores")
+        reportMenu.add_command(label="Reporte De Errores", command = self.crearReporteErrores)
         reportMenu.add_command(label="Generar Arbol AST")
         reportMenu.add_command(label="Tabla De Símbolos")
         menuBar.add_cascade(label="Reportes", menu=reportMenu)
@@ -44,29 +45,35 @@ class MainWindow():
         self.btnInterpretar.place(x=300, y=10)
         self.btnDebug.place(x=400, y=10)
 
-
-
     def run(self):
         self.root.mainloop()
-
-    def open_file(self):
-        self.fileName = filedialog.askopenfilename(title="Seleccionar archivo", initialdir="./", filetypes=((".jpr", "*.jpr"), ("All Files", "*.*")))
-        if self.fileName != "":
-            file = open(self.fileName, "r", encoding="utf-8")
-            content = file.read()
-            file.close()
-            # tipo de archivo leido
-            self.txt.delete("1.0", END)
-            self.txt.insert("1.0", content)
 
     def new_file(self):
         self.fileName = ""
         self.txt.delete(1.0, END)
         self.textConsola.delete(1.0, END)
 
+    def open_file(self):
+        self.fileName = filedialog.askopenfilename(title= "Seleccionar archivo",initialdir = "./", filetypes= (("All Files", "*.*"), (".jpr", "*.jpr")))
+        if self.fileName != "":
+            file = open(self.fileName, "r", encoding="utf-8")
+            content = file.read()
+            file.close()
+            self.txt.delete("1.0", END)
+            self.txt.insert("1.0", content)
+
+    def saveAs_file(self):
+        guardar = filedialog.asksaveasfilename(title = "Guardar Archivo", initialdir = "C:/", filetypes= (("Archivo jpr", "*.jpr"), ("rmt files", "*.rmt")))
+        print("guaradasd ", guardar)
+        fguardar = open(guardar, "w+")
+        fguardar.write(self.txt.get(1.0, END))
+        fguardar.close()
+        self.fileName = guardar
+
     def save_file(self):
-        if(self.fileName == ""):
-            guardar = filedialog.asksaveasfilename(title = "Guardar Archivo", initialdir="C:/", filetypes=(".jpr", "*.jpr"))
+        if self.fileName == "":
+            guardar = filedialog.asksaveasfilename(title = "Guardar Archivo", initialdir="C:/", filetypes=((".jpr", "*.jpr"), ("rmt files", "*.rmt")))
+            print("guaradasd ",guardar)
             fguardar = open(guardar, "w+")
             fguardar.write(self.txt.get(1.0, END))
             fguardar.close()
@@ -76,17 +83,19 @@ class MainWindow():
             file.write(self.txt.get("1.0", END))
             file.close()
 
-    def saveAs_file(self):
-        guardar = filedialog.asksaveasfilename(title="Guardar Archivo", initialdir="C:/", filetypes=(("jpr", "*.jpr"), ("rmt files", "*.rmt")))
-        fguardar = open(guardar, "w+")
-        fguardar.write(self.txt.get(1.0, END))
-        fguardar.close()
-        self.fileName = guardar
 
     def btn_run(self):
+        from TS.Excepcion import listaErrores
+        listaErrores.clear()
         entrada = ""
         entrada = self.txt.get("1.0", END)
         print(entrada)
         salidaConsola = ejecutar(entrada)
         self.textConsola.delete("1.0", END)
         self.textConsola.insert("1.0", salidaConsola)
+
+    def crearReporteErrores(self):
+        from Reporte.CrearReporteErrores import CrearReporteErrores
+        CrearReporteErrores.crearReporteErrores(None)
+#    def posicion(event):    #ACTUALIZAR POSICION
+ #       pos.config(text = "[" + str(editor.index(INSERT)).replace(".",",") + "]" )

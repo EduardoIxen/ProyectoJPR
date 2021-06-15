@@ -24,6 +24,7 @@ reservadas = {
     'else'  : 'RELSE',
     'while' : 'RWHILE',
     'break' : 'RBREAK',
+    'main'  : 'RMAIN'
 }
 
 tokens  = [
@@ -134,7 +135,7 @@ def t_newline(t):
     t.lexer.lineno += t.value.count("\n")
     
 def t_error(t):
-    errores.append(Excepcion("Lexico","Error léxico." + t.value[0] , t.lexer.lineno, find_column(input, t)))
+    errores.append(Excepcion("Lexico","Error lexico." + t.value[0] , t.lexer.lineno, find_column(input, t)))
     t.lexer.skip(1)
 
 # Compute column.
@@ -187,6 +188,7 @@ from Instrucciones.Asignacion import Asignacion
 from Instrucciones.If import If
 from Instrucciones.While import While
 from Instrucciones.Break import Break
+from Instrucciones.Main import Main
 
 def p_init(t) :
     'init            : instrucciones'
@@ -216,6 +218,7 @@ def p_instruccion(t) :
                         | if_instr
                         | while_instr
                         | break_instr finins
+                        | main_instr
     '''
     t[0] = t[1]
 
@@ -226,8 +229,9 @@ def p_finins(t) :
 
 def p_instruccion_error(t):
     'instruccion        : error PUNTOCOMA'
-    errores.append(Excepcion("Sintáctico","Error Sintáctico." + str(t[1].value) , t.lineno(1), find_column(input, t.slice[1])))
+    errores.append(Excepcion("Sintactico","Error Sintactico." + str(t[1].value) , t.lineno(1), find_column(input, t.slice[1])))
     t[0] = ""
+
 #///////////////////////////////////////IMPRIMIR//////////////////////////////////////////////////
 
 def p_imprimir(t) :
@@ -278,6 +282,13 @@ def p_break(t):
     '''break_instr : RBREAK
     '''
     t[0] = Break(t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////MAIN//////////////////////////////////////////////////
+
+def p_main(t) :
+    'main_instr     : RMAIN PARA PARC LLAVEA instrucciones LLAVEC'
+    t[0] = Main(t[5], t.lineno(1), find_column(input, t.slice[1]))
+
     
 #///////////////////////////////////////EXPRESION//////////////////////////////////////////////////
 
@@ -327,6 +338,11 @@ def p_expresion_binaria(t):
     elif t[2] == "&&":
         t[0] = Logica(OperadorLogico.AND, t[1],t[3],t.lineno(2), find_column(input, t.slice[2]))
     
+
+def p_expresion_error(t):
+    'expresion : error'
+    errores.append(Excepcion("Sintactico","Error Sintactico." + str(t[1].value) , t.lineno(1), find_column(input, t.slice[1])))
+    t[0] = ""
 
 def p_expresion_unaria(t):
     '''
