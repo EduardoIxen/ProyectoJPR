@@ -31,8 +31,9 @@ class For(Instruccion):
             return Excepcion("Semantico", "Tipo de dato no booleano en condicion.", self.fila, self.columna)
 
         while bool(condicion) == True:
+            nuevaTabla2 = TablaSimbolos(nuevaTabla)       #NUEVO ENTORNO
             for instruccion in self.instrucciones:
-                result = instruccion.interpretar(tree, nuevaTabla)
+                result = instruccion.interpretar(tree, nuevaTabla2)
                 if isinstance(result, Excepcion):
                     tree.getExcepciones().append(result)
                     tree.updateConsola(result.toString())
@@ -41,12 +42,12 @@ class For(Instruccion):
 
             if self.actualizacion != None:
                 actualizacion = self.actualizacion.interpretar(
-                    tree, nuevaTabla)
+                    tree, nuevaTabla2)
                 if isinstance(actualizacion, Excepcion):
                     return actualizacion
 
             # realizar la operacion de comparacion
-            condicion = self.condicion.interpretar(tree, nuevaTabla)
+            condicion = self.condicion.interpretar(tree, nuevaTabla2)
             if isinstance(condicion, Excepcion):
                 return condicion
 
