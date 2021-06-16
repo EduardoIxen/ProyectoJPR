@@ -23,6 +23,7 @@ reservadas = {
     'if'    : 'RIF',
     'else'  : 'RELSE',
     'while' : 'RWHILE',
+    'for'   : 'RFOR',
     'break' : 'RBREAK',
     'main'  : 'RMAIN'
 }
@@ -39,6 +40,8 @@ tokens  = [
     'DIV',
     'POTENCIA',
     'MODULO',
+    'MASMAS',
+    'MENOSMENOS',
     'MENORQUE', #Operadores relacionales
     'MAYORQUE',
     'MENORIGUAL',
@@ -68,6 +71,8 @@ t_POR           = r'\*'
 t_DIV           = r'/'
 t_POTENCIA      = r'\*\*'
 t_MODULO        = r'\%'
+t_MASMAS        = r'\+\+'
+t_MENOSMENOS    = r'\-\-'
 t_MENORQUE      = r'<' # Relacionales
 t_MAYORQUE      = r'>'
 t_MENORIGUAL    = r'<='
@@ -189,6 +194,10 @@ from Instrucciones.If import If
 from Instrucciones.While import While
 from Instrucciones.Break import Break
 from Instrucciones.Main import Main
+from Expresiones.Casteo import Casteo
+from Expresiones.Incremento import Incremento
+from Expresiones.Decremento import Decremento
+from Instrucciones.For import For
 
 def p_init(t) :
     'init            : instrucciones'
@@ -219,6 +228,9 @@ def p_instruccion(t) :
                         | while_instr
                         | break_instr finins
                         | main_instr
+                        | incremento_instr finins
+                        | decremento_instr finins
+                        | for_instr
     '''
     t[0] = t[1]
 
@@ -276,6 +288,28 @@ def p_while(t):
     '''
     t[0] = While(t[3], t[6], t.lineno(1), find_column(input, t.slice[1]))
 
+#/////////////////////////////////////// FOR //////////////////////////////////////////////////
+def p_for(t):
+    '''
+    for_instr : RFOR PARA declasigna PUNTOCOMA expresion PUNTOCOMA actualizacion PARC LLAVEA instrucciones LLAVEC
+    '''
+    t[0] = For(t[3], t[5], t[7], t[10], t.lineno(1), find_column(input, t.slice[1]))
+
+def p_declasigna(t):
+    '''
+    declasigna : declaracion_instr
+                | asignacion_instr
+    '''
+    t[0] = t[1]
+
+def p_actualizacion(t):
+    '''
+    actualizacion : incremento_instr
+                    | decremento_instr
+                    | asignacion_instr
+    '''
+    t[0] = t[1]
+
 #///////////////////////////////////////BREAK//////////////////////////////////////////////////
 
 def p_break(t):
@@ -289,7 +323,40 @@ def p_main(t) :
     'main_instr     : RMAIN PARA PARC LLAVEA instrucciones LLAVEC'
     t[0] = Main(t[5], t.lineno(1), find_column(input, t.slice[1]))
 
-    
+#/////////////////////////////////////// INCREMENTO //////////////////////////////////////////////////
+
+def p_incremento(t):
+    'incremento_instr : ID MASMAS'
+    t[0] = Incremento(t[1], t.lineno(1), find_column(input, t.slice[1]))
+
+#/////////////////////////////////////// DECREMENTO //////////////////////////////////////////////////
+
+def p_decremento(t):
+    'decremento_instr : ID MENOSMENOS'
+    t[0] = Decremento(t[1], t.lineno(1), find_column(input, t.slice[1]))
+
+#/////////////////////////////////////// TIPO //////////////////////////////////////////////////
+
+def p_tipo(t):
+    '''
+    tipo : RINT
+            | RDOUBLE
+            | RBOOLEAN
+            | RCHAR
+            | RSTRING
+    '''
+    if t[1].lower() == 'int':
+        t[0] = TIPO.ENTERO
+    elif t[1].lower() == 'double':
+        t[0] = TIPO.DECIMAL
+    elif t[1].lower() == 'boolean':
+        t[0] = TIPO.BOOLEANO
+    elif t[1].lower() == 'char':
+        t[0] = TIPO.CHARACTER
+    elif t[1].lower() == 'string':
+        t[0] = TIPO.CADENA
+
+
 #///////////////////////////////////////EXPRESION//////////////////////////////////////////////////
 
 def p_expresion_binaria(t):
@@ -309,6 +376,7 @@ def p_expresion_binaria(t):
             | expresion OR expresion
             | expresion AND expresion
     '''
+    print("summaaaaaa")
     if t[2] == '+':
         t[0] = Aritmetica(OperadorAritmetico.MAS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '-':
@@ -353,6 +421,24 @@ def p_expresion_unaria(t):
         t[0] = Aritmetica(OperadorAritmetico.UMENOS, t[2], None, t.lineno(1), find_column(input, t.slice[1]))
     elif t[1] == "!":
         t[0] = Logica(OperadorLogico.NOT, t[2], None, t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////EXPRESION CASTEO//////////////////////////////////////////////////
+
+def p_expresion_casteo(t):
+    'expresion : PARA tipo PARC expresion'
+    t[0] = Casteo(t[2], t[4], t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////EXPRESION INCREMENTO//////////////////////////////////////////////////
+
+def p_expresion_incremento(t):
+    'expresion : incremento_instr'
+    t[0] = t[1]
+
+#///////////////////////////////////////EXPRESION DECREMENTO //////////////////////////////////////////////////
+
+def p_expresion_decremento(t):
+    'expresion : decremento_instr'
+    t[0] = t[1]
 
 def p_expresion_agrupacion(t):
     '''
@@ -425,16 +511,42 @@ def ejecutar(entrada):
         ast.getExcepciones().append(error)
         ast.updateConsola(error.toString())
 
-    for instruccion in ast.getInstrucciones():      # REALIZAR LAS ACCIONES
-        value = instruccion.interpretar(ast,TSGlobal)
-        if isinstance(value, Excepcion) :
-            ast.getExcepciones().append(value)
-            ast.updateConsola(value.toString())
-        if isinstance(value, Break) :
-            err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo.", instruccion.fila, instruccion.columna)
-            ast.getExcepciones().append(err)
-            ast.updateConsola(err.toString())
+    for instruccion in ast.getInstrucciones():      # PRIMERA PASADA (DECLARACIONES Y ASIGNACIONES)
+        if isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion):
+            value = instruccion.interpretar(ast,TSGlobal)
+            if isinstance(value, Excepcion) :
+                ast.getExcepciones().append(value)
+                ast.updateConsola(value.toString())
+            if isinstance(value, Break) :
+                err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo.", instruccion.fila, instruccion.columna)
+                ast.getExcepciones().append(err)
+                ast.updateConsola(err.toString())
         
+    for instruccion in ast.getInstrucciones():      # SEGUNDA PASADA (Main)
+        contador = 0
+        if isinstance(instruccion, Main):
+            contador += 1
+            if contador == 2: #VERIFICA LA DUPLICIDAD DEL MAIN
+                err = Excepcion("Semantico", "Existen 2 funciones main.", instruccion.fila, instruccion.columna)
+                ast.getExcepciones().append(err)
+                ast.updateConsola(err.toString())
+                break
+            value = instruccion.interpretar(ast,TSGlobal)
+            if isinstance(value, Excepcion) :
+                ast.getExcepciones().append(value)
+                ast.updateConsola(value.toString())
+            if isinstance(value, Break) :
+                err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo.", instruccion.fila, instruccion.columna)
+                ast.getExcepciones().append(err)
+                ast.updateConsola(err.toString())
+
+    for instruccion in ast.getInstrucciones():
+        if not (isinstance(instruccion, Main) or isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion)):
+                err = Excepcion("Semantico", "Sentencia fuera de main.", instruccion.fila, instruccion.columna)
+                ast.getExcepciones().append(err)
+                ast.updateConsola(err.toString())
+
+
 
     return ast.getConsola()
 
