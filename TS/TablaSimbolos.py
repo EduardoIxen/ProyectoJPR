@@ -26,14 +26,14 @@ class TablaSimbolos:
     def actualizarTabla(self, simbolo):
         tablaActual = self
         while tablaActual != None:
-            if simbolo.id in tablaActual.tabla :
-                if tablaActual.tabla[simbolo.id].getTipo() == simbolo.getTipo() or \
-                    simbolo.getTipo() == TIPO.NULO or tablaActual.tabla[simbolo.id].getTipo() == TIPO.NULO:
-                    tablaActual.tabla[simbolo.id].setValor(simbolo.getValor())
-                    tablaActual.tabla[simbolo.id].setTipo(simbolo.getTipo())
+            if simbolo.id.lower() in tablaActual.tabla :
+                if tablaActual.tabla[simbolo.id.lower()].getTipo() == simbolo.getTipo() or \
+                    simbolo.getTipo() == TIPO.NULO or tablaActual.tabla[simbolo.id.lower()].getTipo() == TIPO.NULO:
+                    tablaActual.tabla[simbolo.id.lower()].setValor(simbolo.getValor())
+                    tablaActual.tabla[simbolo.id.lower()].setTipo(simbolo.getTipo())
                     return None   ### VARIABLE ACTUALIZADA
                 return Excepcion("Semantico", f"Tipo de dato diferente para la asignacion [{self.tabla[simbolo.id].getValor()} ({self.tabla[simbolo.id].getTipo()}) -> {simbolo.getValor()} ({simbolo.getTipo()})]", simbolo.getFila(), simbolo.getColumna())
             else:
                 tablaActual = tablaActual.anterior
-        return Excepcion("Semantico", f"Variable no encontrada en asignacion.", simbolo.getFila(), simbolo.getColumna())
+        return Excepcion("Semantico", f"Variable no encontrada en asignacion -{simbolo.id}-.", simbolo.getFila(), simbolo.getColumna())
         

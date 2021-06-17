@@ -1,3 +1,4 @@
+from tkinter.constants import N
 from TS.Tipo import TIPO
 from Abstract.Instruccion import Instruccion
 from TS.TablaSimbolos import TablaSimbolos
@@ -17,8 +18,7 @@ class For(Instruccion):
     def interpretar(self, tree, table):
         nuevaTabla = TablaSimbolos(table)  # NUEVO ENTORNO
         if self.declasignacion != None:
-            declasigna = self.declasignacion.interpretar(
-                tree, nuevaTabla)  # asignacion de nueva variable
+            declasigna = self.declasignacion.interpretar(tree, nuevaTabla)  # asignacion de nueva variable
             if isinstance(declasigna, Excepcion):
                 return declasigna
 

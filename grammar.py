@@ -22,6 +22,9 @@ reservadas = {
     'null'  : 'RNULL',
     'if'    : 'RIF',
     'else'  : 'RELSE',
+    'switch': 'RSWITCH',
+    'case'  : 'RCASE',
+    'default': 'RDEFAULT',
     'while' : 'RWHILE',
     'for'   : 'RFOR',
     'break' : 'RBREAK',
@@ -34,6 +37,7 @@ tokens  = [
     'PARC',
     'LLAVEA',
     'LLAVEC',
+    'DOSPTS',
     'MAS', #operadores aritmeticos
     'MENOS',
     'POR',
@@ -65,6 +69,7 @@ t_PARA          = r'\('
 t_PARC          = r'\)'
 t_LLAVEA        = r'{'
 t_LLAVEC        = r'}'
+t_DOSPTS        = r'\:'
 t_MAS           = r'\+' #aritmeticos
 t_MENOS         = r'-'
 t_POR           = r'\*'
@@ -77,8 +82,8 @@ t_MENORQUE      = r'<' # Relacionales
 t_MAYORQUE      = r'>'
 t_MENORIGUAL    = r'<='
 t_MAYORIGUAL    = r'>='
+t_DIFERENTE     = r'\=\!'
 t_IGUALIGUAL    = r'=='
-t_DIFERENTE     = r'!='
 t_IGUAL         = r'='
 t_AND           = r'&&' #Logicos
 t_OR            = r'\|\|'
@@ -124,14 +129,14 @@ def t_COMENTARIO_MULTI(t):
     #r'/\*(.|\n)*?\*/'
     #r'\#\*(.|\n)*?\*\#'
     r'\#\*(.|\n)*\*\#'
-    t.lexer.lineno += 1
+    t.lexer.lineno += t.value.count("\n")
 
 # Comentario simple // ...
 def t_COMENTARIO_SIMPLE(t):
     r'\#.*\n'
     t.lexer.lineno += 1
-
-
+    
+    
 # Caracteres ignorados
 t_ignore = " \t"
 
@@ -198,9 +203,12 @@ from Expresiones.Casteo import Casteo
 from Expresiones.Incremento import Incremento
 from Expresiones.Decremento import Decremento
 from Instrucciones.For import For
+from Instrucciones.Switch import Switch
+from Instrucciones.Case import Case
 
 def p_init(t) :
     'init            : instrucciones'
+                    
     t[0] = t[1]
 
 def p_instrucciones_instrucciones_instruccion(t) :
@@ -231,6 +239,7 @@ def p_instruccion(t) :
                         | incremento_instr finins
                         | decremento_instr finins
                         | for_instr
+                        | switch_instr
     '''
     t[0] = t[1]
 
@@ -281,6 +290,47 @@ def p_if3(t) :
     'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE if_instr'
     t[0] = If(t[3], t[6], None, t[9], t.lineno(1), find_column(input, t.slice[1]))
 
+#/////////////////////////////////////// SWITCH //////////////////////////////////////////////////
+
+def p_switch1(t):
+    'switch_instr   : RSWITCH PARA expresion PARC LLAVEA case_list default LLAVEC'
+    t[0] = Switch(t[3], t[6], t[7], t.lineno(1), find_column(input, t.slice[1]))
+
+def p_switch2(t):
+    'switch_instr   : RSWITCH PARA expresion PARC LLAVEA case_list LLAVEC'
+    t[0] = Switch(t[3], t[6], None, t.lineno(1), find_column(input, t.slice[1]))
+
+def p_switch3(t):
+    'switch_instr   : RSWITCH PARA expresion PARC LLAVEA default LLAVEC'
+    t[0] = Switch(t[3], None, t[6], t.lineno(1), find_column(input, t.slice[1]))
+
+#/////////////////////////////////////// CASE //////////////////////////////////////////////////
+
+def p_caseList(t):
+    'case_list : case_list case'
+    if t[2] != "":
+        t[1].append(t[2])
+    t[0] = t[1]
+    
+
+def p_caseList_simple(t):
+    'case_list : case'
+    if t[1] == "":
+        t[0] = []
+    else:    
+        t[0] = [t[1]]
+
+
+def p_case(t):
+    'case : RCASE expresion DOSPTS instrucciones'
+    t[0] = Case(t[2], t[4], t.lineno(1), find_column(input, t.slice[1]))
+
+#/////////////////////////////////////// DEFAULT //////////////////////////////////////////////////
+def p_default(t):
+    'default : RDEFAULT DOSPTS instrucciones'
+    t[0] = Case(None,t[3], t.lineno(1), find_column(input, t.slice[1]))
+
+
 #///////////////////////////////////////WHILE//////////////////////////////////////////////////
 
 def p_while(t):
@@ -299,6 +349,7 @@ def p_declasigna(t):
     '''
     declasigna : declaracion_instr
                 | asignacion_instr
+                |
     '''
     t[0] = t[1]
 
@@ -308,6 +359,7 @@ def p_actualizacion(t):
                     | decremento_instr
                     | asignacion_instr
     '''
+
     t[0] = t[1]
 
 #///////////////////////////////////////BREAK//////////////////////////////////////////////////
@@ -391,7 +443,7 @@ def p_expresion_binaria(t):
         t[0] = Aritmetica(OperadorAritmetico.MOD, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == "==":
         t[0] = Relacional(OperadorRelacional.IGUALIGUAL, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
-    elif t[2] == "!=":
+    elif t[2] == "=!":
         t[0] = Relacional(OperadorRelacional.DIFERENTE, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == "<":
         t[0] = Relacional(OperadorRelacional.MENORQUE, t[1],t[3],t.lineno(2), find_column(input, t.slice[2]))
@@ -407,11 +459,11 @@ def p_expresion_binaria(t):
         t[0] = Logica(OperadorLogico.AND, t[1],t[3],t.lineno(2), find_column(input, t.slice[2]))
     
 
-def p_expresion_error(t):
+'''def p_expresion_error(t):
     'expresion : error'
     errores.append(Excepcion("Sintactico","Error Sintactico." + str(t[1].value) , t.lineno(1), find_column(input, t.slice[1])))
     t[0] = ""
-
+'''
 def p_expresion_unaria(t):
     '''
     expresion : MENOS expresion %prec UMENOS

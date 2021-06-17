@@ -56,7 +56,7 @@ class MainWindow():
     def open_file(self):
         self.fileName = filedialog.askopenfilename(title= "Seleccionar archivo",initialdir = "./", filetypes= (("All Files", "*.*"), (".jpr", "*.jpr")))
         if self.fileName != "":
-            file = open(self.fileName, "r", encoding="utf-8")
+            file = open(self.fileName, "r", encoding="latin-1")
             content = file.read()
             file.close()
             self.txt.delete("1.0", END)
@@ -65,7 +65,7 @@ class MainWindow():
     def saveAs_file(self):
         guardar = filedialog.asksaveasfilename(title = "Guardar Archivo", initialdir = "C:/", filetypes= (("Archivo jpr", "*.jpr"), ("rmt files", "*.rmt")))
         print("guaradasd ", guardar)
-        fguardar = open(guardar, "w+")
+        fguardar = open(guardar, "w+", 'latin-1')
         fguardar.write(self.txt.get(1.0, END))
         fguardar.close()
         self.fileName = guardar
@@ -74,7 +74,7 @@ class MainWindow():
         if self.fileName == "":
             guardar = filedialog.asksaveasfilename(title = "Guardar Archivo", initialdir="C:/", filetypes=((".jpr", "*.jpr"), ("rmt files", "*.rmt")))
             print("guaradasd ",guardar)
-            fguardar = open(guardar, "w+")
+            fguardar = open(guardar, "w+", 'latin-1')
             fguardar.write(self.txt.get(1.0, END))
             fguardar.close()
             self.fileName = guardar
