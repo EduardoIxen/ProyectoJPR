@@ -1,3 +1,4 @@
+from os import pipe
 from tkinter import *
 from tkinter import Tk, Entry, Menu, messagebox, filedialog, ttk, Label, scrolledtext, INSERT, END, Button, Scrollbar, RIGHT, Y, HORIZONTAL, VERTICAL, simpledialog
 from ui.Editor import ScrollText
@@ -29,10 +30,13 @@ class MainWindow():
         menuBar.add_cascade(label="Reportes", menu=reportMenu)
         self.root.config(menu=menuBar)
 
-        #Botones correr y debug
+        #Botones correr y debug y label posicion
         self.textConsola = Entry(self.root, width=10)
         self.btnInterpretar = Button(self.root, text="Interpretar", bg='red', command=self.btn_run)
         self.btnDebug = Button(self.root, text="Debugger", bg='red')
+        self.lblPos = Label(self.root, text="Línea:0 Columna:0")
+        self.lblPos.pack()
+        self.lblPos.place(x=600,y=570)
 
         #Creación de editores
         self.txt = ScrollText(self.root)
@@ -45,8 +49,23 @@ class MainWindow():
         self.btnInterpretar.place(x=300, y=10)
         self.btnDebug.place(x=400, y=10)
 
+        self.txt.text.bind("<ButtonRelease-1>", self.posicion)
+        self.txt.text.bind("<KeyPress>", self.posicion)
+        self.txt.text.bind("<Button-1>", self.posicion)
+
+
     def run(self):
         self.root.mainloop()
+
+
+    def posicion(self, *args, **kwargs):
+        posicion = self.txt.text.index(INSERT)
+        posicion2 = posicion.split(".")
+        self.lblPos.destroy()
+        self.lblPos = Label(self.root, text=f"Línea: {posicion2[0]} Columna: {int(posicion2[1])+1}")
+        self.lblPos.pack()
+        self.lblPos.place(x=600,y=570)
+
 
     def new_file(self):
         self.fileName = ""
@@ -56,7 +75,7 @@ class MainWindow():
     def open_file(self):
         self.fileName = filedialog.askopenfilename(title= "Seleccionar archivo",initialdir = "./", filetypes= (("All Files", "*.*"), (".jpr", "*.jpr")))
         if self.fileName != "":
-            file = open(self.fileName, "r", encoding="latin-1")
+            file = open(self.fileName, "r")
             content = file.read()
             file.close()
             self.txt.delete("1.0", END)
@@ -65,7 +84,7 @@ class MainWindow():
     def saveAs_file(self):
         guardar = filedialog.asksaveasfilename(title = "Guardar Archivo", initialdir = "C:/", filetypes= (("Archivo jpr", "*.jpr"), ("rmt files", "*.rmt")))
         print("guaradasd ", guardar)
-        fguardar = open(guardar, "w+", 'latin-1')
+        fguardar = open(guardar, "w")
         fguardar.write(self.txt.get(1.0, END))
         fguardar.close()
         self.fileName = guardar
@@ -74,7 +93,7 @@ class MainWindow():
         if self.fileName == "":
             guardar = filedialog.asksaveasfilename(title = "Guardar Archivo", initialdir="C:/", filetypes=((".jpr", "*.jpr"), ("rmt files", "*.rmt")))
             print("guaradasd ",guardar)
-            fguardar = open(guardar, "w+", 'latin-1')
+            fguardar = open(guardar, "w")
             fguardar.write(self.txt.get(1.0, END))
             fguardar.close()
             self.fileName = guardar
@@ -89,7 +108,6 @@ class MainWindow():
         listaErrores.clear()
         entrada = ""
         entrada = self.txt.get("1.0", END)
-        print(entrada)
         salidaConsola = ejecutar(entrada)
         self.textConsola.delete("1.0", END)
         self.textConsola.insert("1.0", salidaConsola)
@@ -97,5 +115,3 @@ class MainWindow():
     def crearReporteErrores(self):
         from Reporte.CrearReporteErrores import CrearReporteErrores
         CrearReporteErrores.crearReporteErrores(None)
-#    def posicion(event):    #ACTUALIZAR POSICION
- #       pos.config(text = "[" + str(editor.index(INSERT)).replace(".",",") + "]" )

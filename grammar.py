@@ -30,7 +30,8 @@ reservadas = {
     'break' : 'RBREAK',
     'main'  : 'RMAIN'
 }
-
+#print(reservadas.keys()) -> dict_keys(['int', 'double', 'boolean', 'char'
+#print(reservadas.values()) -> dict_values(['RINT', 'RDOUBLE', 'RBOOLEAN', 'RCHAR',
 tokens  = [
     'PUNTOCOMA', #signos
     'PARA',
@@ -601,21 +602,3 @@ def ejecutar(entrada):
 
 
     return ast.getConsola()
-
-'''
-for instruccion in ast.getInstrucciones():      # REALIZAR LAS ACCIONES (primera pasada)
-    if isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion) or \
-        isinstance(instruccion, Funcion)
-        value = instruccion.interpretar(ast,TSGlobal)
-        if isinstance(value, Excepcion) :
-            ast.getExcepciones().append(value)
-            ast.updateConsola(value.toString())
-
-for instruccion in ast.getInstrucciones():      # REALIZAR LAS ACCIONES (segunda pasada)
-    if isinstance(instruccion, Declaracion) or not isinstance(instruccion, Asignacion) or not\
-        isinstance(instruccion, Funcion)
-        value = instruccion.interpretar(ast,TSGlobal)
-        if isinstance(value, Excepcion) :
-            ast.getExcepciones().append(value)
-            ast.updateConsola(value.toString())
-'''

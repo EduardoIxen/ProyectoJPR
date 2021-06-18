@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import INSERT, END, ttk
 
+
 class ScrollText(tk.Frame):
     def __init__(self, master, *args, **kwargs):
+        self.cadenaPos = ""
         tk.Frame.__init__(self, *args, **kwargs)
         self.text = tk.Text(self, bg='#333333', foreground="#d1dce8",
                             insertbackground='white',
@@ -18,10 +20,16 @@ class ScrollText(tk.Frame):
         self.numberLines.pack(side=tk.LEFT, fill=tk.Y, padx=(5, 0))
         self.text.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
-        self.text.bind("<Key>", self.onPressDelay)
+        self.text.bind("<Return>", self.onPressDelay)
+        self.text.bind("<Enter>", self.onPressDelay)
+        self.text.bind("<BackSpace>", self.onPressDelay)
+        self.text.bind("<<Change>>", self.onPressDelay)
+        self.text.bind("<Configure>", self.onPressDelay)
+        self.text.bind("<Motion>", self.onPressDelay)
         self.text.bind("<Button-1>", self.numberLines.redraw)
         self.scrollbar.bind("<Button-1>", self.onScrollPress)
         self.text.bind("<MouseWheel>", self.onPressDelay)
+
 
     def onScrollPress(self, *args):
         self.scrollbar.bind("<B1-Motion>", self.numberLines.redraw)
@@ -58,7 +66,7 @@ class ScrollText(tk.Frame):
 
     def tag_config(self, id, color):
         self.text.tag_config(id, foreground=color)
-
+    
 
 class TextLineNumbers(tk.Canvas):
     def __init__(self, *args, **kwargs):
