@@ -159,7 +159,7 @@ def find_column(inp, token):
 def especiales(cadena):
     cadena = cadena.replace('\\n', '\n')
     cadena = cadena.replace('\\"', '\"')
-    cadena = cadena.replace('\\t', '        ')
+    cadena = cadena.replace('\\t', '      ')
     cadena = cadena.replace("\\'","\'")
     cadena = cadena.replace('\\\\', '\\')
     cadena = cadena.replace('\\r', '\r')
@@ -429,7 +429,7 @@ def p_expresion_binaria(t):
             | expresion OR expresion
             | expresion AND expresion
     '''
-    print("summaaaaaa")
+
     if t[2] == '+':
         t[0] = Aritmetica(OperadorAritmetico.MAS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '-':

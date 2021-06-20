@@ -6,14 +6,16 @@ class ScrollText(tk.Frame):
     def __init__(self, master, *args, **kwargs):
         self.cadenaPos = ""
         tk.Frame.__init__(self, *args, **kwargs)
-        self.text = tk.Text(self, bg='#333333', foreground="#d1dce8",
-                            insertbackground='white',
+        self.text = tk.Text(self, bg='#CCCDCD', foreground="#000000",
+                            insertbackground='black',
                             selectbackground="#3333ff", width=80, height=32)
+
+        self.text.configure(font=("Courier New", 10,'bold'))
 
         self.scrollbar = tk.Scrollbar(self, orient=tk.VERTICAL, command=self.text.yview)
         self.text.configure(yscrollcommand=self.scrollbar.set)
 
-        self.numberLines = TextLineNumbers(self, width=40, bg='#2b2b2b')
+        self.numberLines = TextLineNumbers(self, width=40, bg='#737171')
         self.numberLines.attach(self.text)
 
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
