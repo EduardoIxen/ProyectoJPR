@@ -9,11 +9,11 @@ class Identificador(Instruccion):
         self.tipo = None
 
     def interpretar(self, tree, table):
-        simbolo = table.getTabla(self.identificador.lower())
+        simbolo = table.getTabla(self.identificador.lower())  #OBTENER SIMBOLO DEL ID
 
         if simbolo == None:
             return Excepcion("Semantico", "Variable " + self.identificador + " no encontrada.", self.fila, self.columna)
 
         self.tipo = simbolo.getTipo()
         
-        return simbolo.getValor()
+        return simbolo.getValor() #RETORNAR EL VALOR DEL SIMBOLO ENCONTRADO

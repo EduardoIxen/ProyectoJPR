@@ -10,7 +10,11 @@ class CrearReporteErrores:
         listaFormateada = []
         dictTemp = {}
         contenidoTabla = ""
-
+        '''
+            Recorrer cada diccionario de la lista para agregarle el elemento No
+            y volver a guardar en un diccionario para crear las tablas html con
+            la libreria tabulate.
+        '''
         for itemError in listaErrores:
             contador = contador + 1
             dictTemp["No"] = contador
@@ -66,7 +70,7 @@ class CrearReporteErrores:
         file.write('</html>')
         file.close()
 
-        # obtiene la ruta absoluta del archivo
+        # obtiene la ruta absoluta del archivo y abre el archivo en el navegador con webbrowser.
         my_path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(my_path, f"../ReportesDeErrores.html")
         path = path.replace("\\", "/")

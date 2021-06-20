@@ -12,6 +12,11 @@ class Case(Instruccion):
         self.fila = fila
         self.columna = columna
 
+    '''
+        Cuando se ejecuta el interpretar de un case, se ejecutan todas las
+        instrucciones que posea creando una nueva tabla de simbolos para 
+        cada case.
+    '''
     def interpretar(self, tree, table):
         nuevaTabla = TablaSimbolos(table)
         for instruccion in self.instrucciones:

@@ -13,16 +13,16 @@ class Incremento(Instruccion):
         self.tipo = None
 
     def interpretar(self, tree, table):
-        simbolo = table.getTabla(self.identificador.lower())
+        simbolo = table.getTabla(self.identificador.lower()) #OBTENER SIMBOLO DEL ATABLA DE SIMBOLO MEDIANTE ID
 
         if simbolo == None:
             return Excepcion("Semantico", "Variable " + self.identificador + " no encontrada.", self.fila, self.columna)
 
         self.tipo = simbolo.getTipo()
-        if self.tipo == TIPO.ENTERO or self.tipo == TIPO.DECIMAL:
+        if self.tipo == TIPO.ENTERO or self.tipo == TIPO.DECIMAL: #INCREMENTO PARA DECIMALES Y ENTEROS
             valor = simbolo.getValor() + 1
             nuevoValor = Simbolo(self.identificador, self.tipo, self.fila, self.columna, valor)
-            result = table.actualizarTabla(nuevoValor)
+            result = table.actualizarTabla(nuevoValor) #ACTUALIAR EN TABLA DE SIMBOLOS
 
             if isinstance(valor, Excepcion): return result
             return nuevoValor.getValor()

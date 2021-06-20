@@ -13,14 +13,14 @@ class Declaracion(Instruccion):
 
     def interpretar(self, tree, table):
         if self.expresion != None:
-            value = self.expresion.interpretar(tree, table) #Valor a asignar a la variable
+            value = self.expresion.interpretar(tree, table) #Obtener el valor de la expresio para asignar a la variable
             tipo = self.expresion.tipo
 
             if isinstance(value, Excepcion): return value
 
             simbolo = Simbolo(str(self.identificador), tipo, self.fila, self.columna, value)
 
-            result = table.setTabla(simbolo)
+            result = table.setTabla(simbolo) #Agregar el nuevo simbolo a la tabla de simbolos
 
             if isinstance(result, Excepcion): return result
             return None

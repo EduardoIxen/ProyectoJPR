@@ -30,8 +30,7 @@ reservadas = {
     'break' : 'RBREAK',
     'main'  : 'RMAIN'
 }
-#print(reservadas.keys()) -> dict_keys(['int', 'double', 'boolean', 'char'
-#print(reservadas.values()) -> dict_values(['RINT', 'RDOUBLE', 'RBOOLEAN', 'RCHAR',
+
 tokens  = [
     'PUNTOCOMA', #signos
     'PARA',
@@ -126,9 +125,6 @@ def t_ID(t):
 
 
 def t_COMENTARIO_MULTI(t):
-    #r'(?s)\#\*.*?\*\#'
-    #r'/\*(.|\n)*?\*/'
-    #r'\#\*(.|\n)*?\*\#'
     r'\#\*(.|\n)*\*\#'
     t.lexer.lineno += t.value.count("\n")
 
@@ -156,6 +152,7 @@ def find_column(inp, token):
     line_start = inp.rfind('\n', 0, token.lexpos) + 1
     return (token.lexpos - line_start) + 1
 
+#Caracteres especiales en cadenas
 def especiales(cadena):
     cadena = cadena.replace('\\n', '\n')
     cadena = cadena.replace('\\"', '\"')
@@ -277,7 +274,7 @@ def p_asignacion(t):
     '''
     t[0] = Asignacion(t[1], t[3], t.lineno(1), find_column(input, t.slice[1]))
 
-#///////////////////////////////////////////IF//////////////////////////////////////////////////////
+#/////////////////////////////////////////// IF //////////////////////////////////////////////////////
 
 def p_if1(t) :
     'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC'
@@ -350,7 +347,6 @@ def p_declasigna(t):
     '''
     declasigna : declaracion_instr
                 | asignacion_instr
-                |
     '''
     t[0] = t[1]
 
@@ -493,12 +489,15 @@ def p_expresion_decremento(t):
     'expresion : decremento_instr'
     t[0] = t[1]
 
+#/////////////////////////////////////// AGRUPACION //////////////////////////////////////////////////
+
 def p_expresion_agrupacion(t):
     '''
     expresion :   PARA expresion PARC 
     '''
     t[0] = t[2]
 
+#/////////////////////////////////////// DATOS PRIMITIVOS //////////////////////////////////////////////////
 def p_expresion_identificador(t):
     '''expresion : ID'''
     t[0] = Identificador(t[1], t.lineno(1), find_column(input, t.slice[1]))
@@ -531,6 +530,8 @@ def p_nulo(t):
     'expresion : RNULL'
     t[0] = Primitivos(TIPO.NULO, "null",t.lineno(1), find_column(input, t.slice[1]))
 
+#/////////////////////////////////////// FIN SINTÁCTICO //////////////////////////////////////////////////
+
 import ply.yacc as yacc
 parser = yacc.yacc()
 
@@ -549,8 +550,6 @@ def parse(inp) :
     global input
     input = inp
     return parser.parse(inp)
-
-#INTERFAZ
 
 def ejecutar(entrada):
     from TS.Arbol import Arbol

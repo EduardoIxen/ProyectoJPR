@@ -13,15 +13,22 @@ class Switch(Instruccion):
         self.columna = columna
         
     def interpretar(self, tree, table):
-        expresion = self.expresion.interpretar(tree, table)
+        expresion = self.expresion.interpretar(tree, table) #Obtener el valor de la expresion del switch
         if isinstance(expresion, Excepcion): return expresion
 
         nuevaTabla = TablaSimbolos(table)
 
-        #print("expresion->",expresion) #da 18
-        #print("tipo 18->", self.expresion.tipo)
-        #print("valor case->", caseSimple.condicion.interpretar(tree, nuevaTabla)) #valor varialbe en  case
-        #print("case simple condi->",caseSimple.condicion.tipo) #tipo variable en case
+        '''
+            RECORRER LA LISTA DE CASE Y LUEGO COMPARAR QUE EL TIPO DE LA EXPRESION EN EL
+            SWITCH SEA EL MISMO QUE EL DE LA EXPRESION EN EL CASE Y TAMBIEN COMPARAR EL
+            VALOR DE CADA EXPRESION.
+
+            SI SE CUMPLE, INTERPRETAR EL CASE (EJECUTA CADA INSTRUCCION DENTRO ) -> CASE.PY
+
+            SI ENCUENTRA UN BREAK DENTRO DE UN CASE, YA NO SIGUE RECORRIENDO LA LISTA DE CASE
+
+            SI NO HAY NINGUN BREAK EJECUTA EL DEAFULT, SI HUBIESE UNO
+        '''
 
         countMatch = 0
         countBreak = 0

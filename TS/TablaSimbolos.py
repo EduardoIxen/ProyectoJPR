@@ -7,22 +7,27 @@ class TablaSimbolos:
         self.anterior = anterior
         self.funciones = []
 
-    def setTabla(self, simbolo):      # Agregar una variable
+    def setTabla(self, simbolo):      # Agregar una variable a la tabla de símbolos
         if simbolo.id.lower() in self.tabla :
             return Excepcion("Semantico", "Variable " + simbolo.id + " ya existe", simbolo.fila, simbolo.columna)
         else:
             self.tabla[simbolo.id.lower()] = simbolo
             return None
 
-    def getTabla(self, id):            # obtener una variable
+    def getTabla(self, id):                     # obtener una variable de la tabla de simbolos por su id
         tablaActual = self
         while tablaActual != None:
             if id in tablaActual.tabla :
-                return tablaActual.tabla[id]    #retorna simbolo
+                return tablaActual.tabla[id]    #retorna el símbolo encontrado
             else:
                 tablaActual = tablaActual.anterior
         return None
 
+    '''
+        # Actualizar el valor de un simbolo, buscando en la tabla de simbolos actual
+        # y en las anteriores; comparando que el tipo anterior sea el mismo, Null ó
+        # se le asigne valor null
+    '''
     def actualizarTabla(self, simbolo):
         tablaActual = self
         while tablaActual != None:

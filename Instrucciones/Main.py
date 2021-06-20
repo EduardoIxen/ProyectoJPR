@@ -11,12 +11,12 @@ class Main(Instruccion):
     
     def interpretar(self, tree, table):
         nuevaTabla = TablaSimbolos(table) 
-        for instruccion in self.instrucciones:      # REALIZAR LAS ACCIONES
-            value = instruccion.interpretar(tree,nuevaTabla)
+        for instruccion in self.instrucciones:      # RECORRE TODAS LAS INSTRUCCIOES QUE TIENE DENTRO
+            value = instruccion.interpretar(tree,nuevaTabla) #EJECUTA CADA INSTRUCCION
             if isinstance(value, Excepcion) :
                 tree.getExcepciones().append(value)
                 tree.updateConsola(value.toString())
             if isinstance(value, Break): 
                 err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo", instruccion.fila, instruccion.columna)
-                tree.getExcepciones().append(err)
+                tree.getExcepciones().append(err) #GUARDA EL ERROR PARA SEGUIR CON LAS DEMAS INSTRUCCIONES
                 tree.updateConsola(err.toString())

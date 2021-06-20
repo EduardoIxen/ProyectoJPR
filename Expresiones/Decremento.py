@@ -17,10 +17,10 @@ class Decremento(Instruccion):
             return Excepcion("Semantico", "Variable " + self.identificador + " no encontrada.", self.fila, self.columna)
         
         self.tipo = simbolo.getTipo()
-        if self.tipo == TIPO.ENTERO or self.tipo == TIPO.DECIMAL:
-            valor = simbolo.getValor() - 1
+        if self.tipo == TIPO.ENTERO or self.tipo == TIPO.DECIMAL: #DECREMENTO SOLO PARA DECIMALES Y ENTEROS
+            valor = simbolo.getValor() - 1 #CAMBIO DE VALOR
             nuevoValor = Simbolo(self.identificador, self.tipo, self.fila, self.columna, valor)
-            result = table.actualizarTabla(nuevoValor)
+            result = table.actualizarTabla(nuevoValor) #ACTUALIZAR EN LA TABLA DE SIMBOLOS
 
             if isinstance(valor, Excepcion): return result
             return nuevoValor.getValor()

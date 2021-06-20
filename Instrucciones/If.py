@@ -31,13 +31,13 @@ class If(Instruccion):
                 if self.instruccionesElse != None:
                     nuevaTabla = TablaSimbolos(table)       #NUEVO ENTORNO
                     for instruccion in self.instruccionesElse:
-                        result = instruccion.interpretar(tree, nuevaTabla) #EJECUTA INSTRUCCION ADENTRO DEL IF
+                        result = instruccion.interpretar(tree, nuevaTabla) #EJECUTA INSTRUCCION ADENTRO DEL ELSE
                         if isinstance(result, Excepcion) :
                             tree.getExcepciones().append(result)
                             tree.updateConsola(result.toString()) 
                         if isinstance(result, Break): return result
                 elif self.elseIf != None:
-                    result = self.elseIf.interpretar(tree, table)
+                    result = self.elseIf.interpretar(tree, table)  #SI ES ELSE-IF vuelve al inicio como un nuevo if y evalua denuevo
                     if isinstance(result, Excepcion): return result
                     if isinstance(result, Break): return result
         else:

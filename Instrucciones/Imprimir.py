@@ -9,7 +9,7 @@ class Imprimir(Instruccion):
         self.columna = columna
 
     def interpretar(self, tree, table):
-        value = self.expresion.interpretar(tree, table)  # RETORNA CUALQUIER VALOR
+        value = self.expresion.interpretar(tree, table)  # RETORNA CUALQUIER VALOR DE UNA EXPRESION
 
         if isinstance(value, Excepcion) :
             return value
@@ -17,5 +17,5 @@ class Imprimir(Instruccion):
         if self.expresion.tipo == TIPO.ARREGLO:
             return Excepcion("Semantico", "No se puede imprimir un arreglo completo", self.fila, self.columna)
         
-        tree.updateConsola(value)
+        tree.updateConsola(value) #agregar el valor a la salida de la consola
         return None

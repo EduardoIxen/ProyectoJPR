@@ -8,4 +8,4 @@ class Primitivos(Instruccion):
         self.columna = columna
 
     def interpretar(self, tree, table):
-        return self.valor
+        return self.valor  #retornar el valor(obtenido en la gramatica) del dato primitivo

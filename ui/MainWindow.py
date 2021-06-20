@@ -14,7 +14,7 @@ class MainWindow():
         self.root.state("zoomed")
         self.root.configure(bg='blue')
 
-        # Menu bar
+        ################################# MENU BAR ##################################
         menuBar = Menu(self.root)
         fileMenu = Menu(menuBar, tearoff=0)
         fileMenu.add_command(label="Crear Archivo", command=self.new_file)
@@ -24,23 +24,21 @@ class MainWindow():
         menuBar.add_cascade(label="Archivo", menu=fileMenu)
 
         reportMenu = Menu(menuBar, tearoff=0)
-        reportMenu.add_command(label="Reporte De Errores",
-                               command=self.crearReporteErrores)
+        reportMenu.add_command(label="Reporte De Errores", command=self.crearReporteErrores)
         reportMenu.add_command(label="Generar Arbol AST")
         reportMenu.add_command(label="Tabla De Símbolos")
         menuBar.add_cascade(label="Reportes", menu=reportMenu)
         self.root.config(menu=menuBar)
 
-        # Botones correr y debug y label posicion
+        #################### BOTONES INTERPRETAR, DEBUG Y LABEL POSICIÓN ##################################
         self.textConsola = Entry(self.root, width=10)
-        self.btnInterpretar = Button(
-            self.root, text="Interpretar", bg='red', command=self.btn_run)
+        self.btnInterpretar = Button(self.root, text="Interpretar", bg='red', command=self.btn_run)
         self.btnDebug = Button(self.root, text="Debugger", bg='red')
         self.lblPos = Label(self.root, text="Línea:0 Columna:0")
         self.lblPos.pack()
         self.lblPos.place(x=600, y=570)
 
-        # Creación de editores
+        ############################### CREAR EDITORES Y COLOCAR POSICION #############################
         self.txt = ScrollText(self.root)
         self.txt.insert(END, '\n')
         self.txt.place(x=30, y=40)
@@ -52,19 +50,31 @@ class MainWindow():
         self.btnInterpretar.place(x=300, y=10)
         self.btnDebug.place(x=400, y=10)
 
+        ###################### EVENTOS PARA ACTUALIZAR POSICION ##########################
         self.txt.text.bind("<ButtonRelease-1>", self.posicion)
         self.txt.text.bind("<KeyPress>", self.posicion)
         self.txt.text.bind("<Button-1>", self.posicion)
+        #self.txt.text.bind('<KeyRelease>', self.pintarEscribit) #EVENTO PARA PINTAR AL ESCRIBIR (CORREGIR)
 
+        ################## PINTAR PALABRAS AL CARGAR ARCHIVO ############################
         self.txt.tag_config('reservada', color='blue')
         self.txt.tag_config('string', color='orange red')
         self.txt.tag_config('comentarioU', color='gray38')
-
         self.txt.tag_config('numero', color='magenta3')
             
 
     def run(self):
         self.root.mainloop()
+
+    '''def pintarEscribit(self,*args):  #colorear palabras mientras se escriben
+        entrada = self.txt.get("1.0", END)
+        posicion = self.txt.text.index(INSERT)
+        self.txt.delete("1.0", END)
+        #print(self.recorrerEntrada(entrada))
+        for s in self.recorrerEntrada(entrada[0:len(entrada)-1]):
+            self.txt.insert(INSERT, s[1], s[0])
+        self.txt.text.mark_set(INSERT, posicion)
+        self.txt.text.see(INSERT)'''
 
     def posicion(self, *args, **kwargs):
         posicion = self.txt.text.index(INSERT)
@@ -123,16 +133,14 @@ class MainWindow():
         self.textConsola.delete("1.0", END)
         self.textConsola.insert("1.0", salidaConsola)
 
-    def recorrerEntrada(self, entrada):
+    def recorrerEntrada(self, entrada):  #RECORRER ENTRADA PARA PINTAR
+        #entrada = entrada + " "
         lista = []
         val = ''
         counter = 0
         while counter < len(entrada):
             if re.search(r"[a-zA-Z_]", entrada[counter], re.IGNORECASE):
                 val += entrada[counter]
-                if isinstance(entrada[counter], int):
-                    print("val int",val)
-                    print("entr coun",entrada[counter])
             elif entrada[counter] == "$":
                 if len(val) != 0:
                     l = []
@@ -142,13 +150,11 @@ class MainWindow():
                     lista.append(l)
                     val = ''
                     val = "$"
-                # signos de operaciones
 
             elif entrada[counter] == "\"": #inicio de capatura para las cadenas
                 if len(val) != 0:
                     l = []
                     l.append("variable")
-                    #print("comienzo string",val)
                     l.append(val)
                     lista.append(l)
                     val = ''
@@ -159,7 +165,6 @@ class MainWindow():
                         val += entrada[counter]
                         l = []
                         l.append("string")
-                        #print("final string", val)
                         l.append(val)
                         lista.append(l)
                         val = ''
@@ -171,7 +176,6 @@ class MainWindow():
                 if len(val) != 0:
                     l = []
                     l.append("variable")
-                    #print("comienzo comentario",val)
                     l.append(val)
                     lista.append(l)
                     val = ''
@@ -182,7 +186,6 @@ class MainWindow():
                         val += entrada[counter]
                         l = []
                         l.append("comentarioU")
-                        #print("final string", val)
                         l.append(val)
                         lista.append(l)
                         val = ''
@@ -194,7 +197,6 @@ class MainWindow():
                 if len(val) != 0:
                     l = []
                     l.append("variable")
-                    #print("comienzo comentario",val)
                     l.append(val)
                     lista.append(l)
                     val = ''
@@ -205,7 +207,6 @@ class MainWindow():
                         val += entrada[counter]
                         l = []
                         l.append("comentarioU")
-                        #print("final string", val)
                         l.append(val)
                         lista.append(l)
                         val = ''
@@ -234,17 +235,13 @@ class MainWindow():
                     val += entrada[counter]
                     counter += 1
             elif re.search("[0-9]", entrada[counter]) != None and re.search("[a-zA-Z_]", entrada[counter+1]) == None \
-                and re.search("[a-zA-Z_]", entrada[counter-1]) == None:
-                print("es numerooo", entrada[counter])
+                and re.search("[a-zA-Z_]", entrada[counter-1]) == None: #CAPTURA DE NUMEROS
                 if len(val) != 0:
                     l = []
                     l.append("variable")
                     l.append(val)
                     lista.append(l)
                     val = ''
-                    print("numero fuera",l)
-                #val = entrada[counter]
-                #counter += 1
                 while counter < len(entrada):
                     if not re.search("[0-9]", entrada[counter]):
                         val += entrada[counter]
@@ -252,7 +249,6 @@ class MainWindow():
                         l.append("numero")
                         l.append(val)
                         lista.append(l)
-                        print("numero dentro",l)
                         val = ''
                         break
                     if not re.search("[0-9]", entrada[counter + 1]):
@@ -261,24 +257,20 @@ class MainWindow():
                         l.append("numero")
                         l.append(val)
                         lista.append(l)
-                        print("numero dentro",l)
                         val = ''
                         break
                     val += entrada[counter]
                     counter += 1
             else:
-                #print("val",val)
                 if len(val) != 0:
                     l = []
                     l.append("variable")
                     l.append(val)
                     lista.append(l)
-                    #print("variable",l)
                     val = ''
                 l = []
                 l.append("signo")
                 l.append(entrada[counter])
-                #print("en else",l)
                 lista.append(l)
             counter += 1
         for s in lista:
@@ -290,7 +282,6 @@ class MainWindow():
             elif s[1][0] != "$":
                 if s[0] == 'variable':
                     s[0] = 'etiqueta'
-        #print(lista)
         return lista
 
     def crearReporteErrores(self):

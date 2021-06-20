@@ -4,7 +4,7 @@ from tkinter import INSERT, END, ttk
 
 class ScrollText(tk.Frame):
     def __init__(self, master, *args, **kwargs):
-        self.cadenaPos = ""
+        self.cadenaPos = "" #CREAR EDITOR, INDICANDO COLOR Y FUENTE
         tk.Frame.__init__(self, *args, **kwargs)
         self.text = tk.Text(self, bg='#CCCDCD', foreground="#000000",
                             insertbackground='black',
@@ -22,6 +22,7 @@ class ScrollText(tk.Frame):
         self.numberLines.pack(side=tk.LEFT, fill=tk.Y, padx=(5, 0))
         self.text.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
+        ################### EVENTOS PARA ACTUALIZAR NUMERO DE LINEAS DEL EDITOR ################
         self.text.bind("<Return>", self.onPressDelay)
         self.text.bind("<Enter>", self.onPressDelay)
         self.text.bind("<BackSpace>", self.onPressDelay)
@@ -62,8 +63,6 @@ class ScrollText(tk.Frame):
         self.text.tag_config(id, foreground="red")
 
     def tag_add(self, id, row, columnI, columnF):
-        # print(column+"."+rowI, column+"."+rowF)
-        # print(row+"."+columnI, row+"."+columnF)
         self.text.tag_add(id, row + "." + columnI, row + "." + columnF)
 
     def tag_config(self, id, color):
@@ -79,7 +78,7 @@ class TextLineNumbers(tk.Canvas):
         self.textwidget = text_widget
 
     def redraw(self, *args):
-        # redraw line numbers
+        # REESCRIBIR NUMERO DE LINEAS
         self.delete("all")
 
         i = self.textwidget.index("@1,0")

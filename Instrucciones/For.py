@@ -8,7 +8,7 @@ from Instrucciones.Break import Break
 
 class For(Instruccion):
     def __init__(self, declasignacion, condicion, actualizacion, instrucciones, fila, columna):
-        self.declasignacion = declasignacion
+        self.declasignacion = declasignacion  #DECLASIGNACION PORQUE PUEDE SER UNA DECLARACION O ASIGNACION
         self.condicion = condicion
         self.actualizacion = actualizacion
         self.instrucciones = instrucciones
@@ -16,9 +16,9 @@ class For(Instruccion):
         self.columna = columna
 
     def interpretar(self, tree, table):
-        nuevaTabla = TablaSimbolos(table)  # NUEVO ENTORNO
+        nuevaTabla = TablaSimbolos(table)  # NUEVO ENTORNO PARA EL FOR
         if self.declasignacion != None:
-            declasigna = self.declasignacion.interpretar(tree, nuevaTabla)  # asignacion de nueva variable
+            declasigna = self.declasignacion.interpretar(tree, nuevaTabla)  # asignacion o declaracion de nueva variable
             if isinstance(declasigna, Excepcion):
                 return declasigna
 
@@ -31,8 +31,8 @@ class For(Instruccion):
             return Excepcion("Semantico", "Tipo de dato no booleano en condicion.", self.fila, self.columna)
 
         while bool(condicion) == True:
-            nuevaTabla2 = TablaSimbolos(nuevaTabla)       #NUEVO ENTORNO
-            for instruccion in self.instrucciones:
+            nuevaTabla2 = TablaSimbolos(nuevaTabla)       #NUEVO ENTORNO PARA CADA CICLO DEL FOR
+            for instruccion in self.instrucciones:        # EJECUTAR CADA INSTRUCCION DENTRO DEL FOR
                 result = instruccion.interpretar(tree, nuevaTabla2)
                 if isinstance(result, Excepcion):
                     tree.getExcepciones().append(result)
@@ -40,7 +40,7 @@ class For(Instruccion):
                 if isinstance(result, Break):
                     return None
 
-            if self.actualizacion != None:
+            if self.actualizacion != None:                 # ACTUALIZAR EL VALOR DE LA VARIABLE PARA LA CONDICION
                 actualizacion = self.actualizacion.interpretar(
                     tree, nuevaTabla2)
                 if isinstance(actualizacion, Excepcion):

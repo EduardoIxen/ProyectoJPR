@@ -1,3 +1,6 @@
+'''
+    #Clase para crear el arbol de instrucciones que seran ejecutadas
+'''
 class Arbol:
     def __init__(self, instrucciones ):
         self.instrucciones = instrucciones

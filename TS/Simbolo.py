@@ -1,3 +1,6 @@
+'''
+    # Clase para crear el objeto simbolo, sus métodos y funciones.
+'''
 class Simbolo:
     def __init__(self, identificador, tipo, fila, columna, valor ):
         self.id = identificador

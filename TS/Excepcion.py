@@ -1,6 +1,8 @@
-import webbrowser
-import os.path
-from tabulate import *
+'''
+    # Clase para almacenar y mostrar errores léxicos, sintácticos y semánticos.
+    # Se crea una lista de diccionarios para crear el reporte de errores
+      con la libreria tabulate -> Reporte/CrearReporteErrores.py
+'''
 
 listaErrores = []
 class Excepcion:
