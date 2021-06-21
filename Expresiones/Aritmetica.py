@@ -152,6 +152,8 @@ class Aritmetica(Instruccion):
             return Excepcion("Semantico", f"Error al realizar la potenciaa {self.obtenerVal(self.OperacionIzq.tipo, izq)} ** {self.obtenerVal(self.OperacionDer.tipo, der)}", self.fila, self.columna)
 
         elif self.operador == OperadorAritmetico.MOD: ############# MODULO ##############
+            if self.obtenerVal(self.OperacionDer.tipo, der) == 0:
+                    return Excepcion("Matematico", "Error matematico: Modulo por cero.", self.fila, self.columna)
             if self.OperacionIzq.tipo == TIPO.ENTERO and self.OperacionDer.tipo == TIPO.ENTERO:
                 self.tipo = TIPO.DECIMAL
                 return self.obtenerVal(self.OperacionIzq.tipo, izq) % self.obtenerVal(self.OperacionDer.tipo, der)
