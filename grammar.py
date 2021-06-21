@@ -175,7 +175,7 @@ precedence = (
     ('left','MENORQUE','MAYORQUE', 'MENORIGUAL', 'MAYORIGUAL', 'IGUALIGUAL', 'DIFERENTE'),
     ('left','MAS','MENOS'),
     ('left', 'POR', 'DIV', 'MODULO'),
-    ('nonassoc', 'POTENCIA'),
+    ('left', 'POTENCIA'),
     ('right','UMENOS'),
     ('left','MASMAS', 'MENOSMENOS'),
 )

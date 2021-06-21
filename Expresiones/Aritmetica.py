@@ -30,14 +30,7 @@ class Aritmetica(Instruccion):
                 return self.obtenerVal(self.OperacionIzq.tipo, izq) + self.obtenerVal(self.OperacionDer.tipo, der)
             elif self.OperacionIzq.tipo == TIPO.ENTERO and self.OperacionDer.tipo == TIPO.BOOLEANO or self.OperacionIzq.tipo == TIPO.BOOLEANO and self.OperacionDer.tipo == TIPO.ENTERO:
                 self.tipo = TIPO.ENTERO
-                if izq == True:
-                    return 1 + self.obtenerVal(self.OperacionDer.tipo, der)
-                elif izq == False:
-                    return (-1) + self.obtenerVal(self.OperacionDer.tipo, der)
-                elif der == True:
-                    return self.obtenerVal(self.OperacionIzq.tipo, izq) + 1
-                elif der == False:
-                    return self.obtenerVal(self.OperacionIzq.tipo, izq) + (-1)
+                return self.obtenerVal(self.OperacionIzq.tipo, izq) + self.obtenerVal(self.OperacionDer.tipo, der)
             elif self.OperacionIzq.tipo == TIPO.ENTERO and self.OperacionDer.tipo == TIPO.CADENA or \
                 self.OperacionIzq.tipo == TIPO.CADENA and self.OperacionDer.tipo == TIPO.ENTERO or \
                 self.OperacionIzq.tipo == TIPO.DECIMAL and self.OperacionDer.tipo == TIPO.CADENA or \
@@ -55,21 +48,10 @@ class Aritmetica(Instruccion):
             elif self.OperacionIzq.tipo == TIPO.DECIMAL and self.OperacionDer.tipo == TIPO.BOOLEANO or \
                 self.OperacionIzq.tipo == TIPO.BOOLEANO and self.OperacionDer.tipo == TIPO.DECIMAL:
                 self.tipo = TIPO.DECIMAL
-                if izq == True:
-                    return 1 + self.obtenerVal(self.OperacionDer.tipo, der)
-                elif izq == False:
-                    return (-1) + self.obtenerVal(self.OperacionDer.tipo, der)
-                elif der == True:
-                    return self.obtenerVal(self.OperacionIzq.tipo, izq) + 1
-                elif der == False:
-                    return self.obtenerVal(self.OperacionIzq.tipo, izq) + (-1)
+                return self.obtenerVal(self.OperacionIzq.tipo, izq) + self.obtenerVal(self.OperacionDer.tipo, der)
             elif self.OperacionIzq.tipo == TIPO.BOOLEANO and self.OperacionDer.tipo == TIPO.BOOLEANO:
                 self.tipo = TIPO.ENTERO
-                opDer = 0
-                opIzq = 0
-                opIzq = 1 if izq == True else opIzq -1
-                opDer = 1 if der == True else opDer -1
-                return opDer + opIzq
+                return self.obtenerVal(self.OperacionIzq.tipo, izq) + self.obtenerVal(self.OperacionDer.tipo, der)
             elif self.OperacionIzq.tipo == TIPO.CHARACTER and self.OperacionDer.tipo == TIPO.CHARACTER:
                 self.tipo = TIPO.CADENA
                 return str(self.obtenerVal(self.OperacionIzq.tipo, izq)) + str(self.obtenerVal(self.OperacionDer.tipo, der))
@@ -86,28 +68,14 @@ class Aritmetica(Instruccion):
             elif self.OperacionIzq.tipo == TIPO.ENTERO and self.OperacionDer.tipo == TIPO.BOOLEANO or \
                 self.OperacionIzq.tipo == TIPO.BOOLEANO and self.OperacionDer.tipo == TIPO.ENTERO:
                 self.tipo = TIPO.ENTERO
-                if izq == True:
-                    return 1 - self.obtenerVal(self.OperacionDer.tipo, der)
-                elif izq == False:
-                    return (-1) - self.obtenerVal(self.OperacionDer.tipo, der)
-                elif der == True:
-                    return self.obtenerVal(self.OperacionIzq.tipo, izq) - 1
-                elif der == False:
-                    return self.obtenerVal(self.OperacionIzq.tipo, izq) - (-1)
+                return self.obtenerVal(self.OperacionIzq.tipo, izq) - self.obtenerVal(self.OperacionDer.tipo, der)
             elif self.OperacionIzq.tipo == TIPO.DECIMAL and self.OperacionDer.tipo == TIPO.DECIMAL:
                 self.tipo = TIPO.DECIMAL
                 return self.obtenerVal(self.OperacionIzq.tipo, izq) - self.obtenerVal(self.OperacionDer.tipo, der)
             elif self.OperacionIzq.tipo == TIPO.DECIMAL and self.OperacionDer.tipo == TIPO.BOOLEANO or \
                 self.OperacionIzq.tipo == TIPO.BOOLEANO and self.OperacionDer.tipo == TIPO.DECIMAL:
                 self.tipo = TIPO.DECIMAL
-                if izq == True:
-                    return 1 - self.obtenerVal(self.OperacionDer.tipo, der)
-                elif izq == False:
-                    return (-1) - self.obtenerVal(self.OperacionDer.tipo, der)
-                elif der == True:
-                    return self.obtenerVal(self.OperacionIzq.tipo, izq) - 1
-                elif der == False:
-                    return self.obtenerVal(self.OperacionIzq.tipo, izq) - (-1)
+                return self.obtenerVal(self.OperacionIzq.tipo, izq) - self.obtenerVal(self.OperacionDer.tipo, der)
             return Excepcion("Semantico", f"Error: No se pueden restar los datos {str(izq)} ({self.OperacionIzq.tipo}) y {str(der)}({self.OperacionDer.tipo}).", self.fila, self.columna)
         
         elif self.operador == OperadorAritmetico.POR: ############# MULTIPLICACION################
