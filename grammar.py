@@ -2,6 +2,7 @@
     GRAMATICA PLY
     EDUARDO_IXEN
 '''
+from Nativas.ToLower import Tolower
 from Instrucciones.Declaracion import Declaracion
 from tkinter.constants import NO
 from TS.Excepcion import Excepcion
@@ -605,6 +606,7 @@ def p_nulo(t):
 
 #/////////////////////////////////////// FIN SINTÁCTICO //////////////////////////////////////////////////
 
+from Nativas.ToUpper import ToUpper
 import ply.yacc as yacc
 parser = yacc.yacc()
 
@@ -624,6 +626,19 @@ def parse(inp) :
     input = inp
     return parser.parse(inp)
 
+def crearNativas(ast):  # CREACION Y DECLARACION DE LAS FUNCIONES NATICAS
+    nombre = "toupper"
+    parametros = [{'tipo':TIPO.CADENA, 'identificador':'toUpper##Param1'}]
+    instrucciones = []
+    toUpper = ToUpper(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(toUpper) #Guardar funcione en "memoria" (en el arbol)
+
+    nombre = "tolower"
+    parametros = [{'tipo':TIPO.CADENA, 'identificador':'toLower##Param1'}]
+    instrucciones = []
+    toLower = Tolower(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(toLower) #Guardar funcione en "memoria" (en el arbol)
+
 def ejecutar(entrada):
     from TS.Arbol import Arbol
     from TS.TablaSimbolos import TablaSimbolos
@@ -632,6 +647,7 @@ def ejecutar(entrada):
     ast = Arbol(instrucciones)
     TSGlobal = TablaSimbolos()
     ast.setTSglobal(TSGlobal)
+    crearNativas(ast)
     for error in errores:                   #CAPTURA DE ERRORES LEXICOS Y SINTACTICOS
         ast.getExcepciones().append(error)
         ast.updateConsola(error.toString())
