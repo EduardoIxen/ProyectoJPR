@@ -1,4 +1,5 @@
 
+from Instrucciones.Return import Return
 from Abstract.Instruccion import Instruccion
 from TS.Excepcion import Excepcion
 from TS.Tipo import TIPO
@@ -27,6 +28,7 @@ class If(Instruccion):
                         tree.getExcepciones().append(result)
                         tree.updateConsola(result.toString())
                     if isinstance(result, Break): return result
+                    if isinstance(result, Return): return result
             else:               #ELSE
                 if self.instruccionesElse != None:
                     nuevaTabla = TablaSimbolos(table)       #NUEVO ENTORNO
@@ -36,9 +38,11 @@ class If(Instruccion):
                             tree.getExcepciones().append(result)
                             tree.updateConsola(result.toString()) 
                         if isinstance(result, Break): return result
+                        if isinstance(result, Return): return result
                 elif self.elseIf != None:
                     result = self.elseIf.interpretar(tree, table)  #SI ES ELSE-IF vuelve al inicio como un nuevo if y evalua denuevo
                     if isinstance(result, Excepcion): return result
                     if isinstance(result, Break): return result
+                    if isinstance(result, Return): return result
         else:
             return Excepcion("Semantico", "Condicion invalida en if.", self.fila, self.columna)

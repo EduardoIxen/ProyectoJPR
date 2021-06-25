@@ -1,3 +1,4 @@
+from Instrucciones.Return import Return
 from tkinter.constants import N
 from TS.Tipo import TIPO
 from Abstract.Instruccion import Instruccion
@@ -39,6 +40,7 @@ class For(Instruccion):
                     tree.updateConsola(result.toString())
                 if isinstance(result, Break):
                     return None
+                if isinstance(result, Return): return result
 
             if self.actualizacion != None:                 # ACTUALIZAR EL VALOR DE LA VARIABLE PARA LA CONDICION
                 actualizacion = self.actualizacion.interpretar(

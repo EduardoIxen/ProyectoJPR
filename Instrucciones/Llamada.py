@@ -17,13 +17,13 @@ class Llamada(Instruccion):
         if result == None: #No se encontro la funcion
             return Excepcion("Semantico", "NO SE ENCONTRO LA FUNCION: "+self.identificador, self.fila, self.columna)
 
-        nuevaTabla = TablaSimbolos(table)
+        nuevaTabla = TablaSimbolos(tree.getTSGlobal())
 
         #OBTENER PARAMETROS
         if len(result.parametros) == len(self.parametros): #verificar cantidad de parametros iguales
             contador = 0
             for expresion in self.parametros: #SE OBTIENE EL VALOR DEL PARAMETRO EN LA LLAMADA
-                resultExpresion = expresion.interpretar(tree, nuevaTabla)
+                resultExpresion = expresion.interpretar(tree, table)
                 if isinstance(resultExpresion, Excepcion): return resultExpresion
 
                 if result.parametros[contador]['tipo'] == expresion.tipo: #VERIFICAR QUE SEAN DE TIPOS IGUALES

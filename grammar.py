@@ -29,7 +29,8 @@ reservadas = {
     'for'   : 'RFOR',
     'break' : 'RBREAK',
     'main'  : 'RMAIN',
-    'func'  : 'RFUNC'
+    'func'  : 'RFUNC',
+    'return': 'RRETURN'
 }
 
 tokens  = [
@@ -209,6 +210,7 @@ from Instrucciones.Switch import Switch
 from Instrucciones.Case import Case
 from Instrucciones.Funcion import Funcion
 from Instrucciones.Llamada import Llamada
+from Instrucciones.Return import Return
 
 def p_init(t) :
     'init            : instrucciones'
@@ -246,6 +248,7 @@ def p_instruccion(t) :
                         | switch_instr
                         | funcion_instr
                         | llamada_instr finins
+                        | return_instr finins
     '''
     t[0] = t[1]
 
@@ -430,6 +433,11 @@ def p_parametroLL(t):
     'parametro_llamada : expresion'
     t[0] = t[1]
 
+#/////////////////////////////////////// RETURN //////////////////////////////////////////////////
+
+def p_return(t):
+    'return_instr : RRETURN expresion'
+    t[0] = Return(t[2], t.lineno(1), find_column(input, t.slice[1]))
 
 #/////////////////////////////////////// INCREMENTO //////////////////////////////////////////////////
 
@@ -535,6 +543,12 @@ def p_expresion_unaria(t):
 def p_expresion_casteo(t):
     'expresion : PARA tipo PARC expresion'
     t[0] = Casteo(t[2], t[4], t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////EXPRESION LLAMADA //////////////////////////////////////////////////
+
+def p_expresion_llamada(t):
+    'expresion : llamada_instr'
+    t[0] = t[1]
 
 #///////////////////////////////////////EXPRESION INCREMENTO//////////////////////////////////////////////////
 
@@ -652,6 +666,10 @@ def ejecutar(entrada):
                 err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo.", instruccion.fila, instruccion.columna)
                 ast.getExcepciones().append(err)
                 ast.updateConsola(err.toString())
+            if isinstance(value, Return) :
+                err = Excepcion("Semantico", "Sentencia RETURN fuera de ciclo.", instruccion.fila, instruccion.columna)
+                ast.getExcepciones().append(err)
+                ast.updateConsola(err.toString())
 
     for instruccion in ast.getInstrucciones(): #Tercera pasada Sentencias fuera de main
         if not (isinstance(instruccion, Main) or isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion) or\
@@ -661,5 +679,4 @@ def ejecutar(entrada):
                 ast.updateConsola(err.toString())
 
 
-    print(ast.getFunciones())
     return ast.getConsola()

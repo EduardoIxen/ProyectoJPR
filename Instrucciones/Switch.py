@@ -1,3 +1,4 @@
+from Instrucciones.Return import Return
 from tkinter.constants import NO
 from Instrucciones.Break import Break
 from TS.TablaSimbolos import TablaSimbolos
@@ -43,12 +44,14 @@ class Switch(Instruccion):
                     if isinstance(result, Break): 
                         countBreak = countBreak + 1
                         break
+                    if isinstance(result, Return): return result
 
         if self.instDefault != None:
             if countBreak == 0:
                 result = self.instDefault.interpretar(tree, nuevaTabla)
                 if isinstance(result, Excepcion): return result
                 if isinstance(result, Break): return
+                if isinstance(result, Return): return result
         
 
 
