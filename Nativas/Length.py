@@ -6,7 +6,7 @@ from TS.Excepcion import Excepcion
 from Instrucciones.Break import Break
 from TS.Tipo import TIPO
 
-class ToUpper(Funcion):
+class Length(Funcion):
     def __init__(self, identificador, parametros, instrucciones, fila, columna):
         self.identificador = identificador.lower()
         self.parametros = parametros
@@ -16,11 +16,11 @@ class ToUpper(Funcion):
         self.tipo = TIPO.NULO
     
     def interpretar(self, tree, table):
-        simbolo = table.getTabla("toUpper##Param1")  #buscar por el id quemado del parametro de la funcion
-        if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de ToUpper.", self.fila, self.columna)
+        simbolo = table.getTabla("length##Param1")
+        if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de length.", self.fila, self.columna)
 
-        if simbolo.getTipo() != TIPO.CADENA:
-            return Excepcion("Semantico", "Parametro de ToUpper no es cadena", self.fila, self.columna)
-        
-        self.tipo = simbolo.getTipo()
-        return simbolo.getValor().upper()
+        self.tipo = TIPO.ENTERO
+        if simbolo.getTipo() == TIPO.CADENA:
+            return len(simbolo.getValor())
+
+        return Excepcion("Semantico", "Parametro de Legnth no es compatible", self.fila, self.columna)

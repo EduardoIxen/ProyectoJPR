@@ -1,12 +1,9 @@
 from Instrucciones.Funcion import Funcion
-from Instrucciones.Return import Return
-from Abstract.Instruccion import Instruccion
-from TS.TablaSimbolos import TablaSimbolos
 from TS.Excepcion import Excepcion
-from Instrucciones.Break import Break
 from TS.Tipo import TIPO
+import math
 
-class Tolower(Funcion):
+class Truncate(Funcion):
     def __init__(self, identificador, parametros, instrucciones, fila, columna):
         self.identificador = identificador.lower()
         self.parametros = parametros
@@ -16,11 +13,12 @@ class Tolower(Funcion):
         self.tipo = TIPO.NULO
     
     def interpretar(self, tree, table):
-        simbolo = table.getTabla("toLower##Param1")
+        simbolo = table.getTabla("truncate##Param1")
         if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de ToLower.", self.fila, self.columna)
 
-        if simbolo.getTipo() != TIPO.CADENA:
-            return Excepcion("Semantico", "Parametro de ToLower no es cadena", self.fila, self.columna)
+        if simbolo.getTipo() != TIPO.DECIMAL and simbolo.getTipo() != TIPO.ENTERO:
+            return Excepcion("Semantico", "Parametro de Truncate no es numerico", self.fila, self.columna)
         
-        self.tipo = simbolo.getTipo()
-        return simbolo.getValor().lower()
+        self.tipo = TIPO.ENTERO
+
+        return math.trunc(simbolo.getValor())

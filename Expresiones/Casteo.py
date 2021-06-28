@@ -16,20 +16,64 @@ class Casteo(Instruccion):
         if isinstance(value, Excepcion): return value
 
         if self.tipo == TIPO.ENTERO and self.expresion.tipo == TIPO.DECIMAL: #double a int
-            return self.obtenerValor(self.tipo, value)
+            try:
+                return self.obtenerValor(self.tipo, value)
+            except:
+                return Excepcion("Semantico", "No se puede castear a int", self.fila, self.columna)
         elif self.tipo == TIPO.DECIMAL and self.expresion.tipo == TIPO.ENTERO: # int a double
-            return self.obtenerValor(self.tipo, value)
+            try:
+                return self.obtenerValor(self.tipo, value)
+            except:
+                return Excepcion("Semantico", "No se puede castear a double", self.fila, self.columna)
         elif self.tipo == TIPO.CADENA and self.expresion.tipo == TIPO.ENTERO: #int a string
-            return self.obtenerValor(self.tipo, value)
+            try:
+                return self.obtenerValor(self.tipo, value)
+            except:
+                return Excepcion("Semantico", "No se puede castear a string", self.fila, self.columna)
         elif self.tipo == TIPO.CHARACTER and self.expresion.tipo == TIPO.ENTERO: #entero a char
-            return chr(self.obtenerValor(self.expresion.tipo, value))
+            try:
+                return chr(self.obtenerValor(self.expresion.tipo, value))
+            except:
+                return Excepcion("Semantico", "No se puede castear a char", self.fila, self.columna)
         elif self.tipo == TIPO.CADENA and self.expresion.tipo == TIPO.DECIMAL: #decimal a cadena
-            return self.obtenerValor(self.tipo, value)
+            try:
+                return self.obtenerValor(self.tipo, value)
+            except:
+                return Excepcion("Semantico", "No se puede castear a string", self.fila, self.columna)
         elif self.tipo == TIPO.ENTERO and self.expresion.tipo == TIPO.CHARACTER: #char a int
-            return ord(value)
+            try:
+                return ord(value)
+            except:
+                return Excepcion("Semantico", "No se puede castear a int", self.fila, self.columna)
         elif self.tipo == TIPO.DECIMAL and self.expresion.tipo == TIPO.CHARACTER: #char a double
-            numeroChar = ord(value)
-            return self.obtenerValor(self.tipo, numeroChar)
+            try:
+                numeroChar = ord(value)
+                return self.obtenerValor(self.tipo, numeroChar)
+            except:
+                return Excepcion("Semantico", "No se puede castear a double", self.fila, self.columna)
+        elif self.tipo == TIPO.ENTERO and self.expresion.tipo == TIPO.CADENA:  #string a int
+            try:
+                return int(self.obtenerValor(self.tipo, value))
+            except:
+                return Excepcion("Semantico", "No se puede castear a int", self.fila, self.columna)
+        elif self.tipo == TIPO.DECIMAL and self.expresion.tipo == TIPO.CADENA:
+            try:
+                return float(self.obtenerValor(self.tipo, value))
+            except:
+                return Excepcion("Semantico", "No se puede castear a double", self.fila, self.columna)
+        elif self.tipo == TIPO.BOOLEANO and self.expresion.tipo == TIPO.CADENA:
+            try:
+                if value.lower() == "true":
+                    nuevoValor = True
+                elif value.lower() == "false":
+                    nuevoValor = False
+
+                if nuevoValor == True or nuevoValor == False:
+                    return nuevoValor
+                else:
+                    return Excepcion("Semantico", "No se puede castear a boolean", self.fila, self.columna)
+            except:
+                return Excepcion("Semantico", "No se puede castear a boolean", self.fila, self.columna)
         return Excepcion("Semantico", f"Imposible realizar castedo de [{self.expresion.tipo}] a [{self.tipo}]", self.fila, self.columna)
 
 
@@ -39,7 +83,6 @@ class Casteo(Instruccion):
         elif tipo == TIPO.DECIMAL:
             return float(valor)
         elif tipo == TIPO.CADENA:
-            print("cadena")
             return str(valor)
         elif tipo == TIPO.CHARACTER:
             return str

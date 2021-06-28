@@ -2,6 +2,8 @@
     GRAMATICA PLY
     EDUARDO_IXEN
 '''
+from Nativas.Truncate import Truncate
+from Nativas.Length import Length
 from Nativas.ToLower import Tolower
 from Instrucciones.Declaracion import Declaracion
 from tkinter.constants import NO
@@ -31,7 +33,8 @@ reservadas = {
     'break' : 'RBREAK',
     'main'  : 'RMAIN',
     'func'  : 'RFUNC',
-    'return': 'RRETURN'
+    'return': 'RRETURN',
+    'read'  : 'RREAD'
 }
 
 tokens  = [
@@ -212,6 +215,7 @@ from Instrucciones.Case import Case
 from Instrucciones.Funcion import Funcion
 from Instrucciones.Llamada import Llamada
 from Instrucciones.Return import Return
+from Expresiones.Read import Read
 
 def p_init(t) :
     'init            : instrucciones'
@@ -604,6 +608,12 @@ def p_nulo(t):
     'expresion : RNULL'
     t[0] = Primitivos(TIPO.NULO, "null",t.lineno(1), find_column(input, t.slice[1]))
 
+#/////////////////////////////////////// READ //////////////////////////////////////////////////
+
+def p_expresion_read(t):
+    'expresion : RREAD PARA PARC'
+    t[0] = Read(t.lineno(1), find_column(input, t.slice[1]))
+
 #/////////////////////////////////////// FIN SINTÁCTICO //////////////////////////////////////////////////
 
 from Nativas.ToUpper import ToUpper
@@ -638,6 +648,19 @@ def crearNativas(ast):  # CREACION Y DECLARACION DE LAS FUNCIONES NATICAS
     instrucciones = []
     toLower = Tolower(nombre, parametros, instrucciones, -1, -1)
     ast.addFuncion(toLower) #Guardar funcione en "memoria" (en el arbol)
+
+    nombre = "length"
+    parametros = [{'tipo':TIPO.CADENA, 'identificador':'length##Param1'}]
+    instrucciones = []
+    tamanio = Length(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(tamanio)
+
+    nombre = "truncate"
+    parametros = [{'tipo':TIPO.DECIMAL, 'identificador':'truncate##Param1'}]
+    instrucciones = []
+    trunc = Truncate(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(trunc)
+
 
 def ejecutar(entrada):
     from TS.Arbol import Arbol

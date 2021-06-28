@@ -63,6 +63,10 @@ class MainWindow():
         self.txt.tag_config('numero', color='magenta3')
             
 
+    def actualizarConsola(self, contConsola):
+        self.textConsola.delete("1.0", END)
+        self.textConsola.insert("1.0", contConsola)
+
     def run(self):
         self.root.mainloop()
 

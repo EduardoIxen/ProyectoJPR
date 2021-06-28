@@ -26,7 +26,7 @@ class Llamada(Instruccion):
                 resultExpresion = expresion.interpretar(tree, table)
                 if isinstance(resultExpresion, Excepcion): return resultExpresion
 
-                if result.parametros[contador]['tipo'] == expresion.tipo: #VERIFICAR QUE SEAN DE TIPOS IGUALES
+                if result.parametros[contador]['tipo'] == expresion.tipo or self.identificador.lower() == "truncate": #VERIFICAR QUE SEAN DE TIPOS IGUALES
                     #CREACION DE SIMBOLOS E INGRESARLO A LA TABLA DE SIMBOLOS 
                     simbolo = Simbolo(str(result.parametros[contador]['identificador']).lower(), result.parametros[contador]['tipo'], self.fila, self.columna, resultExpresion)
                     resultTabla = nuevaTabla.setTabla(simbolo)
