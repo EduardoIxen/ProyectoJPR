@@ -1,3 +1,4 @@
+from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
 from TS.TablaSimbolos import TablaSimbolos
 from TS.Tipo import TIPO
@@ -27,6 +28,7 @@ class Case(Instruccion):
                 tree.updateConsola(result.toString())
             if isinstance(result, Break): return result
             if isinstance(result, Return): return result
+            if isinstance(result, Continue): return result  #retornar instancia de CONTINUE para marcar error
         
         return None
 

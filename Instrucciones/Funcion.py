@@ -1,3 +1,4 @@
+from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
 from Abstract.Instruccion import Instruccion
 from TS.TablaSimbolos import TablaSimbolos
@@ -28,4 +29,8 @@ class Funcion(Instruccion):
             if isinstance(value, Return):
                 self.tipo = value.tipo
                 return value.result
+            if isinstance(value, Continue):
+                err = Excepcion("Semantico", "Sentencia CONTINUE fuera de ciclo.", instruccion.fila, instruccion.columna)
+                tree.getExcepciones().append(err) #Guardar el error
+                tree.updateConsola(err.toString())
         return None

@@ -1,3 +1,4 @@
+from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
 from Abstract.Instruccion import Instruccion
 from TS.Excepcion import Excepcion
@@ -28,6 +29,7 @@ class While(Instruccion):
                         if isinstance(result, Break):
                             return None
                         if isinstance(result, Return): return result
+                        if isinstance(result, Continue): break #dejar de ejecutar las instrucciones del ciclo actual del while y pasar al siguiente ciclo
                 else:
                     break
             else:

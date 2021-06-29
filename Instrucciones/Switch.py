@@ -1,3 +1,4 @@
+from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
 from tkinter.constants import NO
 from Instrucciones.Break import Break
@@ -45,6 +46,7 @@ class Switch(Instruccion):
                         countBreak = countBreak + 1
                         break
                     if isinstance(result, Return): return result
+                    if isinstance(result, Continue): return result #retornar instancia de continue para marcar error
 
         if self.instDefault != None:
             if countBreak == 0:
@@ -52,6 +54,7 @@ class Switch(Instruccion):
                 if isinstance(result, Excepcion): return result
                 if isinstance(result, Break): return
                 if isinstance(result, Return): return result
+                if isinstance(result, Continue): return result  #retornar instancia de continue para marcar error
         
 
 

@@ -1,3 +1,4 @@
+from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
 from tkinter.constants import N
 from TS.Tipo import TIPO
@@ -41,6 +42,7 @@ class For(Instruccion):
                 if isinstance(result, Break):
                     return None
                 if isinstance(result, Return): return result
+                if isinstance(result, Continue): break  #Al encontrar un continue dejar de ejecutar las instrucciones actuales y pasar al siguiente ciclo
 
             if self.actualizacion != None:                 # ACTUALIZAR EL VALOR DE LA VARIABLE PARA LA CONDICION
                 actualizacion = self.actualizacion.interpretar(

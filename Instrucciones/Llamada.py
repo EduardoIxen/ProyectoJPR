@@ -27,7 +27,7 @@ class Llamada(Instruccion):
                 if isinstance(resultExpresion, Excepcion): return resultExpresion
 
                 if self.identificador.lower() == "typeof":
-                    result.parametros[contador]['tipo'] = expresion.tipo
+                    result.parametros[contador]['tipo'] = expresion.tipo  #igualar el tipo de la expresion recibida con el tipo del parametro de la funcion nativa
 
                 if result.parametros[contador]['tipo'] == expresion.tipo or self.identificador.lower() == "truncate" \
                     or self.identificador.lower() == "round" or self.identificador.lower() == "typeof"  : #VERIFICAR QUE SEAN DE TIPOS IGUALES

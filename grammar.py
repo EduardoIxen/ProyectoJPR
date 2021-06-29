@@ -2,6 +2,7 @@
     GRAMATICA PLY
     EDUARDO_IXEN
 '''
+from Instrucciones.Continue import Continue
 from Nativas.TypeOf import TypeOf
 from Nativas.Round import Round
 from Nativas.Truncate import Truncate
@@ -33,6 +34,7 @@ reservadas = {
     'while' : 'RWHILE',
     'for'   : 'RFOR',
     'break' : 'RBREAK',
+    'continue': 'RCONTINUE',
     'main'  : 'RMAIN',
     'func'  : 'RFUNC',
     'return': 'RRETURN',
@@ -256,6 +258,7 @@ def p_instruccion(t) :
                         | funcion_instr
                         | llamada_instr finins
                         | return_instr finins
+                        | continue_instr finins
     '''
     t[0] = t[1]
 
@@ -383,6 +386,13 @@ def p_break(t):
     '''break_instr : RBREAK
     '''
     t[0] = Break(t.lineno(1), find_column(input, t.slice[1]))
+
+#/////////////////////////////////////// CONTINUE //////////////////////////////////////////////////
+
+def p_continue(t):
+    '''continue_instr : RCONTINUE
+    '''
+    t[0] = Continue(t.lineno(1), find_column(input, t.slice[1]))
 
 #///////////////////////////////////////MAIN//////////////////////////////////////////////////
 
@@ -700,6 +710,10 @@ def ejecutar(entrada):
                 err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo.", instruccion.fila, instruccion.columna)
                 ast.getExcepciones().append(err)
                 ast.updateConsola(err.toString())
+            if isinstance(value, Continue):
+                err = Excepcion("Semantico", "Sentencia CONTINUE fuera de ciclo.", instruccion.fila, instruccion.columna)
+                ast.getExcepciones().append(err)
+                ast.updateConsola(err.toString())
         
     for instruccion in ast.getInstrucciones():      # SEGUNDA PASADA (Main)
         contador = 0
@@ -720,6 +734,10 @@ def ejecutar(entrada):
                 ast.updateConsola(err.toString())
             if isinstance(value, Return) :
                 err = Excepcion("Semantico", "Sentencia RETURN fuera de ciclo.", instruccion.fila, instruccion.columna)
+                ast.getExcepciones().append(err)
+                ast.updateConsola(err.toString())
+            if isinstance(value, Continue):
+                err = Excepcion("Semantico", "Sentencia CONTINUE fuera de ciclo.", instruccion.fila, instruccion.columna)
                 ast.getExcepciones().append(err)
                 ast.updateConsola(err.toString())
 

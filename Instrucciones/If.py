@@ -1,4 +1,5 @@
 
+from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
 from Abstract.Instruccion import Instruccion
 from TS.Excepcion import Excepcion
@@ -29,6 +30,7 @@ class If(Instruccion):
                         tree.updateConsola(result.toString())
                     if isinstance(result, Break): return result
                     if isinstance(result, Return): return result
+                    if isinstance(result, Continue): return result #Retornar instancia de continue para marcar error
             else:               #ELSE
                 if self.instruccionesElse != None:
                     nuevaTabla = TablaSimbolos(table)       #NUEVO ENTORNO
@@ -39,10 +41,12 @@ class If(Instruccion):
                             tree.updateConsola(result.toString()) 
                         if isinstance(result, Break): return result
                         if isinstance(result, Return): return result
+                        if isinstance(result, Continue): return result #Retornar instancia de continue para marcar error
                 elif self.elseIf != None:
                     result = self.elseIf.interpretar(tree, table)  #SI ES ELSE-IF vuelve al inicio como un nuevo if y evalua denuevo
                     if isinstance(result, Excepcion): return result
                     if isinstance(result, Break): return result
                     if isinstance(result, Return): return result
+                    if isinstance(result, Continue): return result  #Retornar instancia de continue para marcar error
         else:
             return Excepcion("Semantico", "Condicion invalida en if.", self.fila, self.columna)
