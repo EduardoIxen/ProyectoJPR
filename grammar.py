@@ -2,6 +2,8 @@
     GRAMATICA PLY
     EDUARDO_IXEN
 '''
+from Nativas.TypeOf import TypeOf
+from Nativas.Round import Round
 from Nativas.Truncate import Truncate
 from Nativas.Length import Length
 from Nativas.ToLower import Tolower
@@ -661,6 +663,17 @@ def crearNativas(ast):  # CREACION Y DECLARACION DE LAS FUNCIONES NATICAS
     trunc = Truncate(nombre, parametros, instrucciones, -1, -1)
     ast.addFuncion(trunc)
 
+    nombre = "round"
+    parametros = [{'tipo':TIPO.DECIMAL, 'identificador':'round##Param1'}]
+    instrucciones = []
+    trunc = Round(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(trunc)
+
+    nombre = "typeof"
+    parametros = [{'tipo':TIPO.NULO, 'identificador':'typeof##Param1'}]
+    instrucciones = []
+    trunc = TypeOf(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(trunc)
 
 def ejecutar(entrada):
     from TS.Arbol import Arbol
