@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
 from Abstract.Instruccion import Instruccion
@@ -34,3 +35,13 @@ class While(Instruccion):
                     break
             else:
                 return Excepcion("Semantico", "Tipo de dato no booleano en while.", self.fila, self.columna)
+
+    def getNodo(self):
+        nodo = NodoAST("WHILE")
+
+        instruccionesIf = NodoAST("INSTRUCCIONES")
+        for instr in self.instrucciones:
+            instruccionesIf.agregarHijoNodo(instr.getNodo())
+        nodo.agregarHijoNodo(instruccionesIf)
+
+        return nodo

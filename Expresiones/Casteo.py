@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 import re
 from TS.Tipo import TIPO
 from TS.Excepcion import Excepcion
@@ -76,6 +77,11 @@ class Casteo(Instruccion):
                 return Excepcion("Semantico", "No se puede castear a boolean", self.fila, self.columna)
         return Excepcion("Semantico", f"Imposible realizar castedo de [{self.expresion.tipo}] a [{self.tipo}]", self.fila, self.columna)
 
+    def getNodo(self):
+        nodo = NodoAST("CASTEO")
+        nodo.agregarHijo(str(self.tipo))
+        nodo.agregarHijoNodo(self.expresion.getNodo())
+        return nodo
 
     def obtenerValor(self, tipo, valor):
         if tipo == TIPO.ENTERO:

@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Abstract.Instruccion import Instruccion
 from TS.Excepcion import Excepcion
 from TS.Tipo import TIPO
@@ -19,3 +20,8 @@ class Imprimir(Instruccion):
         
         tree.updateConsola(value) #agregar el valor a la salida de la consola
         return None
+
+    def getNodo(self):
+        nodo = NodoAST("IMPRIMIR")
+        nodo.agregarHijoNodo(self.expresion.getNodo())
+        return nodo

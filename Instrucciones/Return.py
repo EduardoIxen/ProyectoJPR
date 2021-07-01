@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from TS.Excepcion import Excepcion
 from TS.TablaSimbolos import TablaSimbolos
 from Abstract.Instruccion import Instruccion
@@ -18,3 +19,8 @@ class Return(Instruccion):
         self.result = result            # valor del result
 
         return self
+
+    def getNodo(self):
+        nodo = NodoAST("RETURN")
+        nodo.agregarHijoNodo(self.expresion.getNodo())
+        return nodo

@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Abstract.Instruccion import Instruccion
 from TS.TablaSimbolos import TablaSimbolos
@@ -25,3 +26,13 @@ class Main(Instruccion):
                 err = Excepcion("Semantico", "Sentencia CONTINUE fuera de ciclo.", instruccion.fila, instruccion.columna)
                 tree.getExcepciones().append(err)
                 tree.updateConsola(err.toString())
+
+    def getNodo(self):
+        nodo = NodoAST("MAIN")
+
+        instruccionesIf = NodoAST("INSTRUCCIONES")
+        for instr in self.instrucciones:
+            instruccionesIf.agregarHijoNodo(instr.getNodo())
+        nodo.agregarHijoNodo(instruccionesIf)
+
+        return nodo

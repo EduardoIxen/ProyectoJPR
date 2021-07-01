@@ -2,6 +2,8 @@
     GRAMATICA PLY
     EDUARDO_IXEN
 '''
+import os
+from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Nativas.TypeOf import TypeOf
 from Nativas.Round import Round
@@ -754,5 +756,22 @@ def ejecutar(entrada, txtConsola):
                 err = Excepcion("Semantico", "Sentencia fuera de main.", instruccion.fila, instruccion.columna)
                 ast.getExcepciones().append(err)
                 ast.updateConsola(err.toString())
+
+    init = NodoAST("RAIZ")
+    instr = NodoAST("INSTRUCCIONES")
+    
+    for instruccion in ast.getInstrucciones():
+        instr.agregarHijoNodo(instruccion.getNodo())
+
+    init.agregarHijoNodo(instr)
+
+    grafo = ast.getDot(init) #DEVUELVE EL CODIGO GRAPHVIZ DEL AST
+
+    dirname = os.path.dirname(__file__)
+    direcc = os.path.join(dirname, 'ast.dot')
+    arch = open(direcc, "w+")
+    arch.write(grafo)
+    arch.close()
+    os.system('dot -T pdf -o ast.pdf ast.dot')
 
     return ast.getConsola()

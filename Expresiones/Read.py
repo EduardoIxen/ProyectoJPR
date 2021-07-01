@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Abstract.Instruccion import Instruccion
 from TS.Tipo import TIPO
 from tkinter import *
@@ -21,3 +22,7 @@ class Read(Instruccion):
         tree.getTxtConsola().insert("1.0", tree.getConsola())
 
         return USER_INP  #retornar el valor(obtenido en la gramatica) del dato primitivo
+
+    def getNodo(self):
+        nodo = NodoAST("READ")
+        return nodo

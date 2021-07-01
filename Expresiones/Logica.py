@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Abstract.Instruccion import Instruccion
 from TS.Excepcion import Excepcion
 from TS.Tipo import TIPO, OperadorLogico
@@ -30,6 +31,18 @@ class Logica(Instruccion):
             if self.OperacionIzq.tipo == TIPO.BOOLEANO:
                 return not self.obtenerVal(self.OperacionIzq.tipo, izq)
             return Excepcion("Semantico", f"Tipo Erroneo de operacion ! {str(izq)} ({self.OperacionIzq.tipo}).", self.fila, self.columna)
+
+    def getNodo(self):
+        nodo = NodoAST("LOGICA")
+        if self.OperacionDer != None:
+            nodo.agregarHijoNodo(self.OperacionIzq.getNodo())
+            nodo.agregarHijo(str(self.operador))
+            nodo.agregarHijoNodo(self.OperacionDer.getNodo())
+        else:
+            nodo.agregarHijo(str(self.operador))
+            nodo.agregarHijoNodo(self.OperacionIzq.getNodo())
+        
+        return nodo
 
     def obtenerVal(self, tipo, val):
         if tipo == TIPO.ENTERO:

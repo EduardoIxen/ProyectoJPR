@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
 from tkinter.constants import N
@@ -57,3 +58,11 @@ class For(Instruccion):
 
             if self.condicion.tipo != TIPO.BOOLEANO:
                 return Excepcion("Semantico", "Tipo de dato no booleano en condicion.", self.fila, self.columna)
+
+    def getNodo(self):
+        nodo = NodoAST("FOR")
+        instrucciones = NodoAST("INSTRUCCIONES")
+        for instr in self.instrucciones:
+            instrucciones.agregarHijoNodo(instr.getNodo())
+        nodo.agregarHijoNodo(instrucciones)
+        return nodo

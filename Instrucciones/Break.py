@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Abstract.Instruccion import Instruccion
 
 class Break(Instruccion):
@@ -7,3 +8,7 @@ class Break(Instruccion):
 
     def interpretar(self, tree, table):
         return self
+
+    def getNodo(self):
+        nodo = NodoAST("BREAK")
+        return nodo

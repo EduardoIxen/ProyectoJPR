@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Abstract.Instruccion import Instruccion
 from TS.Excepcion import Excepcion
 from TS.Tipo import TIPO
@@ -25,3 +26,8 @@ class Decremento(Instruccion):
             if isinstance(valor, Excepcion): return result
             return nuevoValor.getValor()
         return Excepcion("Semantico", f"No se puede reducir variables de tipo {self.tipo}", self.fila, self.columna)
+
+    def getNodo(self):
+        nodo = NodoAST("DECREMENTO")
+        nodo.agregarHijo(str(self.identificador))
+        return nodo

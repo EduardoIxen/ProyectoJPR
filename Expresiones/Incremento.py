@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from TS.Tipo import TIPO
 from tkinter.constants import NO
 from Abstract.Instruccion import Instruccion
@@ -27,3 +28,8 @@ class Incremento(Instruccion):
             if isinstance(valor, Excepcion): return result
             return nuevoValor.getValor()
         return Excepcion("Semantico", f"No se puede incrementar variables de tipo {self.tipo}", self.fila, self.columna)
+
+    def getNodo(self):
+        nodo = NodoAST("INCREMENTO")
+        nodo.agregarHijo(str(self.identificador))
+        return nodo

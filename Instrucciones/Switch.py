@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
 from tkinter.constants import NO
@@ -57,4 +58,16 @@ class Switch(Instruccion):
                 if isinstance(result, Continue): return result  #retornar instancia de continue para marcar error
         
 
-
+    def getNodo(self):
+        nodo = NodoAST("SWITCH")
+        lsCase = NodoAST("LISTA CASE")
+        for caso in self.lsCase:
+            lsCase.agregarHijoNodo(caso.getNodo())
+        nodo.agregarHijoNodo(lsCase)
+        
+        if self.instDefault != None:
+            defaultIns = NodoAST("DEFAULT")    
+            defaultIns.agregarHijoNodo(self.instDefault.getNodo())
+            nodo.agregarHijoNodo(defaultIns)
+        
+        return nodo

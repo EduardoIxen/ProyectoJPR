@@ -1,4 +1,5 @@
 
+from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
 from Abstract.Instruccion import Instruccion
@@ -50,3 +51,22 @@ class If(Instruccion):
                     if isinstance(result, Continue): return result  #Retornar instancia de continue para marcar error
         else:
             return Excepcion("Semantico", "Condicion invalida en if.", self.fila, self.columna)
+
+    
+    def getNodo(self):
+        nodo = NodoAST("IF")
+
+        instruccionesIf = NodoAST("INSTRUCCIONES")
+        for instr in self.instruccionesIf:
+            instruccionesIf.agregarHijoNodo(instr.getNodo())
+        nodo.agregarHijoNodo(instruccionesIf)
+
+        if self.instruccionesElse != None:
+            instruccionesElse = NodoAST("INSTRUCCIONES")
+            for instr in self.instruccionesElse:
+                instruccionesElse.agregarHijoNodo(instr.getNodo())
+            nodo.agregarHijoNodo(instruccionesElse)
+        elif self.elseIf != None:
+            nodo.agregarHijoNodo(self.elseIf.getNodo())
+
+        return nodo

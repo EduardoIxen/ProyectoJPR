@@ -1,3 +1,5 @@
+
+from Abstract.NodoAST import NodoAST
 from TS.Tipo import TIPO
 from tkinter.constants import NO
 from TS.Excepcion import Excepcion
@@ -35,3 +37,9 @@ class Declaracion(Instruccion):
             if isinstance(result, Excepcion): return result
             return None
         
+    def getNodo(self):
+        nodo = NodoAST("DECLARACION")
+        nodo.agregarHijo(str(self.identificador))
+        if self.expresion != None:
+            nodo.agregarHijoNodo(self.expresion.getNodo())
+        return nodo

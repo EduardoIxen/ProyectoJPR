@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
 from TS.TablaSimbolos import TablaSimbolos
@@ -32,3 +33,10 @@ class Case(Instruccion):
         
         return None
 
+    def getNodo(self):
+        nodo = NodoAST("CASE")
+        instrucciones = NodoAST("INSTRUCCIONES")
+        for instr in self.instrucciones:
+            instrucciones.agregarHijoNodo(instr.getNodo())
+        nodo.agregarHijoNodo(instrucciones)
+        return nodo
