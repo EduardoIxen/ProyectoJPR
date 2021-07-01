@@ -1,6 +1,9 @@
 '''
     #Clase para crear el arbol de instrucciones que seran ejecutadas
 '''
+from tkinter.constants import SEL
+
+
 class Arbol:
     def __init__(self, instrucciones ):
         self.instrucciones = instrucciones
@@ -8,6 +11,7 @@ class Arbol:
         self.excepciones = []
         self.consola = ""
         self.TSglobal = None
+        self.txtConsola = None
 
     def getInstrucciones(self):
         return self.instrucciones
@@ -47,3 +51,9 @@ class Arbol:
 
     def addFuncion(self, funcion):
         self.funciones.append(funcion)
+    
+    def setTxtConsola(self, txtConsola):
+        self.txtConsola = txtConsola
+    
+    def getTxtConsola(self):
+        return self.txtConsola

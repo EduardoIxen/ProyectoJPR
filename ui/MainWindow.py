@@ -133,7 +133,8 @@ class MainWindow():
         listaErrores.clear()
         entrada = ""
         entrada = self.txt.get("1.0", END)
-        salidaConsola = ejecutar(entrada)
+        self.textConsola.delete("1.0", END)
+        salidaConsola = ejecutar(entrada, self.textConsola)
         self.textConsola.delete("1.0", END)
         self.textConsola.insert("1.0", salidaConsola)
 

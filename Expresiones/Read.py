@@ -11,7 +11,13 @@ class Read(Instruccion):
         self.tipo = TIPO.CADENA
 
     def interpretar(self, tree, table):
+        tree.getTxtConsola().delete("1.0", END)
+        tree.getTxtConsola().insert("1.0", tree.getConsola())
+        #tree.setConsola("")
         
-        USER_INP = simpledialog.askstring(title="Test", prompt="What's your Name?:")
+        USER_INP = simpledialog.askstring(title="Read", prompt="Ingrese el dato solicitado.")
+        tree.updateConsola("->"+USER_INP)
+        tree.getTxtConsola().delete("1.0", END)
+        tree.getTxtConsola().insert("1.0", tree.getConsola())
 
         return USER_INP  #retornar el valor(obtenido en la gramatica) del dato primitivo

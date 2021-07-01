@@ -259,6 +259,7 @@ def p_instruccion(t) :
                         | llamada_instr finins
                         | return_instr finins
                         | continue_instr finins
+                        | read_inst_exp finins
     '''
     t[0] = t[1]
 
@@ -623,7 +624,11 @@ def p_nulo(t):
 #/////////////////////////////////////// READ //////////////////////////////////////////////////
 
 def p_expresion_read(t):
-    'expresion : RREAD PARA PARC'
+    'expresion : read_inst_exp'
+    t[0] = t[1]
+
+def p_read_inst_exp(t):
+    'read_inst_exp : RREAD PARA PARC'
     t[0] = Read(t.lineno(1), find_column(input, t.slice[1]))
 
 #/////////////////////////////////////// FIN SINTÁCTICO //////////////////////////////////////////////////
@@ -631,6 +636,7 @@ def p_expresion_read(t):
 from Nativas.ToUpper import ToUpper
 import ply.yacc as yacc
 parser = yacc.yacc()
+from tkinter import END
 
 input = ''
 
@@ -685,7 +691,7 @@ def crearNativas(ast):  # CREACION Y DECLARACION DE LAS FUNCIONES NATICAS
     trunc = TypeOf(nombre, parametros, instrucciones, -1, -1)
     ast.addFuncion(trunc)
 
-def ejecutar(entrada):
+def ejecutar(entrada, txtConsola):
     from TS.Arbol import Arbol
     from TS.TablaSimbolos import TablaSimbolos
 
@@ -693,6 +699,7 @@ def ejecutar(entrada):
     ast = Arbol(instrucciones)
     TSGlobal = TablaSimbolos()
     ast.setTSglobal(TSGlobal)
+    ast.setTxtConsola(txtConsola)
     crearNativas(ast)
     for error in errores:                   #CAPTURA DE ERRORES LEXICOS Y SINTACTICOS
         ast.getExcepciones().append(error)
@@ -747,6 +754,5 @@ def ejecutar(entrada):
                 err = Excepcion("Semantico", "Sentencia fuera de main.", instruccion.fila, instruccion.columna)
                 ast.getExcepciones().append(err)
                 ast.updateConsola(err.toString())
-
 
     return ast.getConsola()
