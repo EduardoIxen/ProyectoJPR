@@ -22,7 +22,7 @@ class Incremento(Instruccion):
         self.tipo = simbolo.getTipo()
         if self.tipo == TIPO.ENTERO or self.tipo == TIPO.DECIMAL: #INCREMENTO PARA DECIMALES Y ENTEROS
             valor = simbolo.getValor() + 1
-            nuevoValor = Simbolo(self.identificador, self.tipo, self.fila, self.columna, valor)
+            nuevoValor = Simbolo(self.identificador, self.tipo, False, self.fila, self.columna, valor)
             result = table.actualizarTabla(nuevoValor) #ACTUALIAR EN TABLA DE SIMBOLOS
 
             if isinstance(valor, Excepcion): return result

@@ -2,12 +2,13 @@
     # Clase para crear el objeto simbolo, sus métodos y funciones.
 '''
 class Simbolo:
-    def __init__(self, identificador, tipo, fila, columna, valor ):
+    def __init__(self, identificador, tipo, arreglo, fila, columna, valor ):
         self.id = identificador
         self.tipo = tipo
         self.fila = fila
         self.columna = columna
         self.valor = valor
+        self.arreglo = arreglo
 
     def getID(self):
         return self.id
@@ -32,3 +33,6 @@ class Simbolo:
     
     def getColumna(self):
         return self.columna
+
+    def getArreglo(self):
+        return self.arreglo

@@ -10,12 +10,13 @@ class Asignacion(Instruccion):
         self.expresion = expresion
         self.fila = fila
         self.columna = columna
+        self.arreglo = False
 
     def interpretar(self, tree, table):
         value = self.expresion.interpretar(tree, table) # Obtengo el valor de la expresion a asignar a la variable
         if isinstance(value, Excepcion): return value
 
-        simbolo = Simbolo(self.identificador, self.expresion.tipo, self.fila, self.columna, value)
+        simbolo = Simbolo(self.identificador, self.expresion.tipo, self.arreglo, self.fila, self.columna, value)
         result = table.actualizarTabla(simbolo)
 
         if isinstance(result, Excepcion): return result

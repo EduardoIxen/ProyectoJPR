@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Instrucciones.Funcion import Funcion
 from Instrucciones.Return import Return
 from Abstract.Instruccion import Instruccion
@@ -14,6 +15,7 @@ class ToUpper(Funcion):
         self.fila = fila
         self.columna = columna
         self.tipo = TIPO.NULO
+        self.simbolo = None
     
     def interpretar(self, tree, table):
         simbolo = table.getTabla("toUpper##Param1")  #buscar por el id quemado del parametro de la funcion
@@ -22,5 +24,13 @@ class ToUpper(Funcion):
         if simbolo.getTipo() != TIPO.CADENA:
             return Excepcion("Semantico", "Parametro de ToUpper no es cadena", self.fila, self.columna)
         
+        self.simbolo = simbolo
         self.tipo = simbolo.getTipo()
         return simbolo.getValor().upper()
+
+    def getNodo(self):
+        nodo = NodoAST("TOUPPER")
+        nodoDato = NodoAST(self.simbolo.getTipo())
+        nodoDato.agregarHijo(self.simbolo.getValor())
+        nodo.agregarHijoNodo(nodoDato)
+        return nodo

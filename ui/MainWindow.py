@@ -25,7 +25,7 @@ class MainWindow():
 
         reportMenu = Menu(menuBar, tearoff=0)
         reportMenu.add_command(label="Reporte De Errores", command=self.crearReporteErrores)
-        reportMenu.add_command(label="Generar Arbol AST")
+        reportMenu.add_command(label="Generar Arbol AST", command=self.crearAST)
         reportMenu.add_command(label="Tabla De Símbolos")
         menuBar.add_cascade(label="Reportes", menu=reportMenu)
         self.root.config(menu=menuBar)
@@ -292,3 +292,13 @@ class MainWindow():
     def crearReporteErrores(self):
         from Reporte.CrearReporteErrores import CrearReporteErrores
         CrearReporteErrores.crearReporteErrores(None)
+
+    def crearAST(self):
+        import os
+        import webbrowser
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(my_path, f"Reporte\\ast.pdf")
+        path = path.replace("\\ui", "")
+        path = path.replace("\\", "/")
+        print(path)
+        webbrowser.open_new_tab(path)

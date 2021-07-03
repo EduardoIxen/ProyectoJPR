@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Instrucciones.Funcion import Funcion
 from Instrucciones.Return import Return
 from Abstract.Instruccion import Instruccion
@@ -14,13 +15,22 @@ class Tolower(Funcion):
         self.fila = fila
         self.columna = columna
         self.tipo = TIPO.NULO
+        self.simbolo = None
     
     def interpretar(self, tree, table):
         simbolo = table.getTabla("toLower##Param1")
         if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de ToLower.", self.fila, self.columna)
 
+        self.simbolo = simbolo
         if simbolo.getTipo() != TIPO.CADENA:
             return Excepcion("Semantico", "Parametro de ToLower no es cadena", self.fila, self.columna)
         
         self.tipo = simbolo.getTipo()
         return simbolo.getValor().lower()
+
+    def getNodo(self):
+        nodo = NodoAST("TOLOWER")
+        nodoDato = NodoAST(self.simbolo.getTipo())
+        nodoDato.agregarHijo(self.simbolo.getValor())
+        nodo.agregarHijoNodo(nodoDato)
+        return nodo

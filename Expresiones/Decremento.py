@@ -20,7 +20,7 @@ class Decremento(Instruccion):
         self.tipo = simbolo.getTipo()
         if self.tipo == TIPO.ENTERO or self.tipo == TIPO.DECIMAL: #DECREMENTO SOLO PARA DECIMALES Y ENTEROS
             valor = simbolo.getValor() - 1 #CAMBIO DE VALOR
-            nuevoValor = Simbolo(self.identificador, self.tipo, self.fila, self.columna, valor)
+            nuevoValor = Simbolo(self.identificador, self.tipo, False, self.fila, self.columna, valor)
             result = table.actualizarTabla(nuevoValor) #ACTUALIZAR EN LA TABLA DE SIMBOLOS
 
             if isinstance(valor, Excepcion): return result

@@ -29,11 +29,13 @@ class Llamada(Instruccion):
 
                 if self.identificador.lower() == "typeof":
                     result.parametros[contador]['tipo'] = expresion.tipo  #igualar el tipo de la expresion recibida con el tipo del parametro de la funcion nativa
+                if self.identificador.lower() == "length":
+                    result.parametros[contador]['tipo'] = expresion.tipo
 
                 if result.parametros[contador]['tipo'] == expresion.tipo or self.identificador.lower() == "truncate" \
                     or self.identificador.lower() == "round" or self.identificador.lower() == "typeof"  : #VERIFICAR QUE SEAN DE TIPOS IGUALES
                     #CREACION DE SIMBOLOS E INGRESARLO A LA TABLA DE SIMBOLOS 
-                    simbolo = Simbolo(str(result.parametros[contador]['identificador']).lower(), result.parametros[contador]['tipo'], self.fila, self.columna, resultExpresion)
+                    simbolo = Simbolo(str(result.parametros[contador]['identificador']).lower(), result.parametros[contador]['tipo'], False, self.fila, self.columna, resultExpresion)
                     resultTabla = nuevaTabla.setTabla(simbolo)
                     if isinstance(resultTabla, Excepcion): return resultTabla
 
@@ -58,9 +60,12 @@ class Llamada(Instruccion):
             parametros.agregarHijoNodo(param.getNodo())
         nodo.agregarHijoNodo(parametros)
 
-        instrucciones = NodoAST("INSTRUCCIONES")
-        for instr in self.instrucciones:
-            instrucciones.agregarHijoNodo(instr.getNodo())
-        nodo.agregarHijoNodo(instrucciones)
+        if self.identificador.lower() != "typeof" and self.identificador.lower() != "length" and\
+            self.identificador.lower() != "round" and self.identificador.lower() != "tolower" and\
+            self.identificador.lower() != "toupper" and self.identificador.lower() != "truncate":
+            instrucciones = NodoAST("INSTRUCCIONES")
+            for instr in self.instrucciones:
+                instrucciones.agregarHijoNodo(instr.getNodo())
+            nodo.agregarHijoNodo(instrucciones)
         
         return nodo

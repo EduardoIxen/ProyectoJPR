@@ -1,6 +1,5 @@
 from Abstract.NodoAST import NodoAST
 from TS.Excepcion import Excepcion
-from TS.TablaSimbolos import TablaSimbolos
 from Abstract.Instruccion import Instruccion
 
 class Return(Instruccion):

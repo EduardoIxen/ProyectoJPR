@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Instrucciones.Funcion import Funcion
 from TS.Excepcion import Excepcion
 from TS.Tipo import TIPO
@@ -10,13 +11,23 @@ class TypeOf(Funcion):
         self.fila = fila
         self.columna = columna
         self.tipo = TIPO.NULO
+        self.simbolo = None
     
     def interpretar(self, tree, table):
         simbolo = table.getTabla("typeof##Param1")  #buscar por el id quemado del parametro de la funcion
         if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de ToUpper.", self.fila, self.columna)
         
+        self.simbolo = simbolo
         self.tipo = simbolo.getTipo()
-        return self.obtenerTipo(simbolo.getTipo())
+        if not isinstance(simbolo.getValor(), list):
+            return self.obtenerTipo(simbolo.getTipo())
+        else:
+            return "ARREGLO->"+self.obtenerTipo(simbolo.getTipo())
+
+    def getNodo(self):
+        nodo = NodoAST("TYPEOF")
+        nodo.agregarHijo(self.simbolo.getID())
+        return nodo
 
     def obtenerTipo(self, tipoEntrada):
         if tipoEntrada == TIPO.ENTERO:
@@ -31,5 +42,7 @@ class TypeOf(Funcion):
             return "STRING"
         elif tipoEntrada == TIPO.NULO:
             return "NULL"
+        elif tipoEntrada == TIPO.ARREGLO:
+            return "ARREGLO"
         else:
             return Excepcion("Semantico", "Tipo de dato invalido.", self.fila, self.columna)

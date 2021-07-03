@@ -12,6 +12,7 @@ class Declaracion(Instruccion):
         self.expresion = expresion
         self.fila = fila
         self.columna = columna
+        self.arreglo = False
 
     def interpretar(self, tree, table):
         if self.expresion != None:
@@ -20,7 +21,7 @@ class Declaracion(Instruccion):
 
             if isinstance(value, Excepcion): return value
 
-            simbolo = Simbolo(str(self.identificador), tipo, self.fila, self.columna, value)
+            simbolo = Simbolo(str(self.identificador), tipo, self.arreglo, self.fila, self.columna, value)
 
             result = table.setTabla(simbolo) #Agregar el nuevo simbolo a la tabla de simbolos
 
@@ -32,7 +33,7 @@ class Declaracion(Instruccion):
 
             if isinstance(value, Excepcion): return value
 
-            simbolo = Simbolo(str(self.identificador), tipo, self.fila, self.columna, value)
+            simbolo = Simbolo(str(self.identificador), tipo, self.arreglo, self.fila, self.columna, value)
             result = table.setTabla(simbolo)
             if isinstance(result, Excepcion): return result
             return None

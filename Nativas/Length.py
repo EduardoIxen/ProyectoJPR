@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Instrucciones.Funcion import Funcion
 from Instrucciones.Return import Return
 from Abstract.Instruccion import Instruccion
@@ -14,13 +15,27 @@ class Length(Funcion):
         self.fila = fila
         self.columna = columna
         self.tipo = TIPO.NULO
+        self.simbolo = None
     
     def interpretar(self, tree, table):
         simbolo = table.getTabla("length##Param1")
+        self.simbolo = simbolo
         if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de length.", self.fila, self.columna)
 
         self.tipo = TIPO.ENTERO
-        if simbolo.getTipo() == TIPO.CADENA:
+        if simbolo.getTipo() == TIPO.CADENA or isinstance(simbolo.getValor(), list):
             return len(simbolo.getValor())
 
         return Excepcion("Semantico", "Parametro de Legnth no es compatible", self.fila, self.columna)
+
+    def getNodo(self):
+        nodo = NodoAST("LENGTH")
+        tipoDato = NodoAST(self.simbolo.getTipo())
+        if self.simbolo.getTipo() == TIPO.CADENA:
+            tipoDato.agregarHijo(self.simbolo.getValor())
+        elif self.simbolo.getArreglo():
+            tipoDato.agregarHijo(self.simbolo.getID())
+        else:
+            return Excepcion("Semantico", "Tipo de dato invalido para la funcion length", self.fila, self.columna)
+        nodo.agregarHijoNodo(tipoDato)
+        return nodo
