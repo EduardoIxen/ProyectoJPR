@@ -2,6 +2,7 @@
     GRAMATICA PLY
     EDUARDO_IXEN
 '''
+
 import os
 from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
@@ -40,7 +41,8 @@ reservadas = {
     'main'  : 'RMAIN',
     'func'  : 'RFUNC',
     'return': 'RRETURN',
-    'read'  : 'RREAD'
+    'read'  : 'RREAD',
+    'new'   : 'RNEW'
 }
 
 tokens  = [
@@ -51,6 +53,8 @@ tokens  = [
     'LLAVEC',
     'DOSPTS',
     'COMA',
+    'CORA',
+    'CORC',
     'MAS', #operadores aritmeticos
     'MENOS',
     'POR',
@@ -84,6 +88,8 @@ t_LLAVEA        = r'{'
 t_LLAVEC        = r'}'
 t_DOSPTS        = r'\:'
 t_COMA          = r','
+t_CORA          = r'\['
+t_CORC          = r'\]'
 t_MAS           = r'\+' #aritmeticos
 t_MENOS         = r'-'
 t_POR           = r'\*'
@@ -222,6 +228,10 @@ from Instrucciones.Funcion import Funcion
 from Instrucciones.Llamada import Llamada
 from Instrucciones.Return import Return
 from Expresiones.Read import Read
+from Instrucciones.DeclaracionArr1 import DeclaracionArr1
+from Instrucciones.DeclaracionArr2 import DeclaracionArr2
+from Instrucciones.ModificarArreglo import ModificarArreglo
+from Expresiones.AccesoArreglo import AccesoArreglo
 
 def p_init(t) :
     'init            : instrucciones'
@@ -262,6 +272,8 @@ def p_instruccion(t) :
                         | return_instr finins
                         | continue_instr finins
                         | read_inst_exp finins
+                        | declArr_instr finins
+                        | modlArr_instr finins
     '''
     t[0] = t[1]
 
@@ -291,6 +303,61 @@ def p_declaracion(t):
         t[0] = Declaracion(t[2], t.lineno(1), find_column(input, t.slice[1]), t[4])
     else:
         t[0] = Declaracion(t[2], t.lineno(1), find_column(input, t.slice[1]), None)
+
+#/////////////////////////////////////// DECLARACION ARREGLO //////////////////////////////////////////////////
+def p_declArr(t):
+    '''declArr_instr : tipo1
+                    | tipo2
+    '''
+    t[0] = t[1]
+
+def p_tipo1(t):
+    'tipo1 : tipo lista_Dim ID IGUAL RNEW tipo lista_expresiones'
+    t[0] = DeclaracionArr1(t[1], t[2], t[3], t[6], t[7], t.lineno(3), find_column(input, t.slice[3]))
+
+def p_lista_Dim1(t):
+    'lista_Dim : lista_Dim CORA CORC'
+    t[0] = t[1] + 1
+
+def p_lista_Dim2(t):
+    'lista_Dim : CORA CORC'
+    t[0] = 1
+
+def p_lista_expresiones_1(t) :
+    'lista_expresiones     : lista_expresiones CORA expresion CORC'
+    t[1].append(t[3])
+    t[0] = t[1]
+
+def p_lista_expresiones_2(t) :
+    'lista_expresiones    : CORA expresion CORC'
+    t[0] = [t[2]]
+
+def p_tipo2(t):
+    'tipo2 : tipo lista_Dim ID IGUAL valores_arreglo'
+    t[0] = DeclaracionArr2(t[1], t[2], t[3], t[5], t.lineno(3), find_column(input, t.slice[3]))
+
+def p_valores_arreglo(t):
+    'valores_arreglo : LLAVEA lista_valores LLAVEC'
+    t[0] = t[2]
+
+def p_listaValores(t):
+    'lista_valores : lista_valores COMA valores'
+    t[1].append(t[3])
+    t[0] = t[1]
+
+def p_listaValor(t):
+    'lista_valores : valores'
+    t[0] = [t[1]]
+
+def p_valor(t):
+    '''valores : valores_arreglo
+               | expresion'''
+    t[0] = t[1]
+
+#/////////////////////////////////////// MODIFICACION ARREGLOS//////////////////////////////////////////////////
+def p_modArr(t):
+    '''modlArr_instr : ID lista_expresiones IGUAL expresion'''
+    t[0] = ModificarArreglo(t[1], t[2], t[4], t.lineno(1), find_column(input, t.slice[1]))
 
 #///////////////////////////////////////ASIGNACION//////////////////////////////////////////////////
 def p_asignacion(t):
@@ -633,6 +700,11 @@ def p_read_inst_exp(t):
     'read_inst_exp : RREAD PARA PARC'
     t[0] = Read(t.lineno(1), find_column(input, t.slice[1]))
 
+#/////////////////////////////////////// ACCESO A ARREGLO //////////////////////////////////////////////////
+def p_expresion_Arreglo(t):
+    '''expresion : ID lista_expresiones'''
+    t[0] = AccesoArreglo(t[1], t[2], t.lineno(1), find_column(input, t.slice[1]))
+
 #/////////////////////////////////////// FIN SINTÁCTICO //////////////////////////////////////////////////
 
 from Nativas.ToUpper import ToUpper
@@ -710,7 +782,7 @@ def ejecutar(entrada, txtConsola):
     for instruccion in ast.getInstrucciones():      # PRIMERA PASADA (DECLARACIONES Y ASIGNACIONES)
         if isinstance(instruccion, Funcion):
             ast.addFuncion(instruccion)             # Guardar la funcion en "memoria" (en el arbol)
-        if isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion):
+        if isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion) or isinstance(instruccion, DeclaracionArr1) or isinstance(instruccion, ModificarArreglo):
             value = instruccion.interpretar(ast,TSGlobal)
             if isinstance(value, Excepcion) :
                 ast.getExcepciones().append(value)
@@ -752,7 +824,7 @@ def ejecutar(entrada, txtConsola):
 
     for instruccion in ast.getInstrucciones(): #Tercera pasada Sentencias fuera de main
         if not (isinstance(instruccion, Main) or isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion) or\
-            isinstance(instruccion, Funcion)):
+            isinstance(instruccion, Funcion) or isinstance(instruccion, DeclaracionArr1) or isinstance(instruccion, ModificarArreglo)):
                 err = Excepcion("Semantico", "Sentencia fuera de main.", instruccion.fila, instruccion.columna)
                 ast.getExcepciones().append(err)
                 ast.updateConsola(err.toString())
@@ -768,10 +840,10 @@ def ejecutar(entrada, txtConsola):
     grafo = ast.getDot(init) #DEVUELVE EL CODIGO GRAPHVIZ DEL AST
 
     dirname = os.path.dirname(__file__)
-    direcc = os.path.join(dirname, 'ast.dot')
+    direcc = os.path.join(dirname, 'Reporte\\ast.dot')
     arch = open(direcc, "w+")
     arch.write(grafo)
     arch.close()
-    os.system('dot -T pdf -o ast.pdf ast.dot')
+    os.system('dot -T pdf -o Reporte/ast.pdf Reporte/ast.dot')
 
     return ast.getConsola()
