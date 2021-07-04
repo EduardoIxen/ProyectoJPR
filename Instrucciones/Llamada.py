@@ -1,3 +1,4 @@
+from TS.Tipo import TIPO
 from Abstract.NodoAST import NodoAST
 from Instrucciones.Funcion import Funcion
 from Abstract.Instruccion import Instruccion
@@ -32,12 +33,26 @@ class Llamada(Instruccion):
                 if self.identificador.lower() == "length":
                     result.parametros[contador]['tipo'] = expresion.tipo
 
+                #print("result tipo",result.parametros[contador]['tipo'])
+                #print("tipo arre:", result.parametros[contador]['tipoArreglo'])
+
+                #print("exp tip",expresion.tipo)
+                #print("resul expr->", resultExpresion)
+
                 if result.parametros[contador]['tipo'] == expresion.tipo or self.identificador.lower() == "truncate" \
-                    or self.identificador.lower() == "round" or self.identificador.lower() == "typeof"  : #VERIFICAR QUE SEAN DE TIPOS IGUALES
+                    or self.identificador.lower() == "round" or self.identificador.lower() == "typeof" : #VERIFICAR QUE SEAN DE TIPOS IGUALES
                     #CREACION DE SIMBOLOS E INGRESARLO A LA TABLA DE SIMBOLOS 
                     simbolo = Simbolo(str(result.parametros[contador]['identificador']).lower(), result.parametros[contador]['tipo'], False, self.fila, self.columna, resultExpresion)
                     resultTabla = nuevaTabla.setTabla(simbolo)
                     if isinstance(resultTabla, Excepcion): return resultTabla
+                elif (result.parametros[contador]['tipo'] == TIPO.ARREGLO and isinstance(resultExpresion, list)):
+                    print("si es arreglo")
+                    if (result.parametros[contador]['tipoArreglo'] == expresion.tipo):
+                        print("mismo tipo dato")
+                        simbolo = Simbolo(str(result.parametros[contador]['identificador']).lower(), result.parametros[contador]['tipoArreglo'], True, self.fila, self.columna, resultExpresion)
+                        resultTabla = nuevaTabla.setTabla(simbolo)
+                        if isinstance(resultTabla, Excepcion): return resultTabla
+                        
 
                 else:
                     return Excepcion("Semantico", "Tipo de dato diferente en parametros de la llamada.", self.fila, self.columna)
