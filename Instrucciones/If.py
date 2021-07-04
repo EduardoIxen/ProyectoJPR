@@ -1,4 +1,8 @@
 
+from Instrucciones.DeclaracionArr1 import DeclaracionArr1
+from Instrucciones.While import While
+from Instrucciones.For import For
+from Instrucciones.Declaracion import Declaracion
 from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
@@ -16,8 +20,10 @@ class If(Instruccion):
         self.elseIf = ElseIf
         self.fila = fila
         self.columna = columna
+        self.tabla = None
 
     def interpretar(self, tree, table):
+        self.tabla = table
         condicion = self.condicion.interpretar(tree, table)
         if isinstance(condicion, Excepcion): return condicion
 
@@ -70,3 +76,27 @@ class If(Instruccion):
             nodo.agregarHijoNodo(self.elseIf.getNodo())
 
         return nodo
+
+    def getTabla(self,tree,table, padre):
+        from TS.TablaSimbolos import listaTablaSimbolos
+        salida = ""
+        #salida += "-¿¿¿Funcion¿¿¿" + nombre + "¿¿¿"+ nombreFunc  + "¿¿¿" + str(self.fila) + "¿¿¿"+ str(self.columna)+ "¿¿¿ - &&\n"
+        for instr in self.instruccionesIf:
+            if isinstance(instr, Declaracion) :
+                salida += str(instr.getTabla(tree,self.tabla, padre))
+            if (isinstance(instr, DeclaracionArr1)):
+                salida += instr.getTabla(tree,table, padre)
+
+        if self.instruccionesElse != None:
+            for instr in self.instruccionesElse:
+                if isinstance(instr, Declaracion) :
+                    salida += str(instr.getTabla(tree,self.tabla, padre))
+                if (isinstance(instr, DeclaracionArr1)):
+                    salida += instr.getTabla(tree,table, padre)
+        
+        if self.elseIf != None:
+            if isinstance(self.elseIf, If):
+                self.elseIf.getTabla(tree, table, padre)
+
+        
+        return salida

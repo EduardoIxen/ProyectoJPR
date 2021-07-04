@@ -1,3 +1,6 @@
+from Instrucciones.DeclaracionArr1 import DeclaracionArr1
+from Instrucciones.Declaracion import Declaracion
+from Instrucciones.Case import Case
 from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
@@ -14,8 +17,10 @@ class Switch(Instruccion):
         self.instDefault = instDefault
         self.fila = fila
         self.columna = columna
+        self.tabla = None
         
     def interpretar(self, tree, table):
+        self.tabla = table
         expresion = self.expresion.interpretar(tree, table) #Obtener el valor de la expresion del switch
         if isinstance(expresion, Excepcion): return expresion
 
@@ -71,3 +76,17 @@ class Switch(Instruccion):
             nodo.agregarHijoNodo(defaultIns)
         
         return nodo
+
+    def getTabla(self,tree,table, padre):
+        from TS.TablaSimbolos import listaTablaSimbolos
+        salida = ""
+        #salida += "-¿¿¿Funcion¿¿¿" + nombre + "¿¿¿"+ nombreFunc  + "¿¿¿" + str(self.fila) + "¿¿¿"+ str(self.columna)+ "¿¿¿ - &&\n"
+        for instr in self.lsCase:
+            if isinstance(instr, Case) :
+                salida += str(instr.getTabla(tree,self.tabla, padre))
+
+        if self.instDefault != None:
+            if isinstance(self.instDefault, Case):
+                self.instDefault.getTabla(tree, self.tabla, padre)
+                    
+        return salida

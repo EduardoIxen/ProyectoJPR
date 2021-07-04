@@ -1,3 +1,10 @@
+from Instrucciones.Case import Case
+from Instrucciones.DeclaracionArr1 import DeclaracionArr1
+from Instrucciones.While import While
+from Instrucciones.For import For
+from Instrucciones.If import If
+from Instrucciones.Switch import Switch
+from Instrucciones.Declaracion import Declaracion
 from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Abstract.Instruccion import Instruccion
@@ -10,8 +17,11 @@ class Main(Instruccion):
         self.instrucciones = instrucciones
         self.fila = fila
         self.columna = columna
+        self.tabla = None
+        self.identificador = "Main"
     
     def interpretar(self, tree, table):
+        self.tabla = table
         nuevaTabla = TablaSimbolos(table) 
         for instruccion in self.instrucciones:      # RECORRE TODAS LAS INSTRUCCIOES QUE TIENE DENTRO
             value = instruccion.interpretar(tree,nuevaTabla) #EJECUTA CADA INSTRUCCION
@@ -36,3 +46,37 @@ class Main(Instruccion):
         nodo.agregarHijoNodo(instruccionesIf)
 
         return nodo
+
+    def getTabla(self,tree,table, padre):
+        from TS.TablaSimbolos import listaTablaSimbolos
+        salida = ""
+        nombre = "Main"
+        nombreFunc = "Funcion"
+
+        salida += "-¿¿¿Funcion¿¿¿" + nombre + "¿¿¿"+ nombreFunc  + "¿¿¿" + str(self.fila) + "¿¿¿"+ str(self.columna)+ "¿¿¿ - &&\n"
+        for instr in self.instrucciones:
+            if isinstance(instr, Declaracion) :
+                salida += str(instr.getTabla(tree,self.tabla,"Main"))
+            if isinstance(instr, If):
+                salida += str(instr.getTabla(tree,table,"Main" + " -> If"))
+            if isinstance(instr, For):
+                salida += str(instr.getTabla(tree,table,"Main"+" -> For"))
+            if isinstance(instr, While):
+                salida += str(instr.getTabla(tree,table,"Main"+" -> While"))
+            if (isinstance(instr, DeclaracionArr1)):
+                salida += instr.getTabla(tree,table,"Main")
+            if (isinstance(instr, Switch)):
+                salida += instr.getTabla(tree, table, "Main->Switch")
+
+        dic = {}
+        dic['Identificador'] = str(self.identificador)
+        dic['Tipo'] = "Funcion Principal"
+        dic['Tipo2'] = "-----"
+        dic['Entorno'] = str(padre)
+        dic['Valor'] = "-----"
+        dic['Fila'] = str(self.fila)
+        dic['Columna'] = str(self.columna)
+        
+        listaTablaSimbolos.append(dic)
+        
+        return salida

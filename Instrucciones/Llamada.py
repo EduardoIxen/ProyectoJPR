@@ -60,12 +60,12 @@ class Llamada(Instruccion):
             parametros.agregarHijoNodo(param.getNodo())
         nodo.agregarHijoNodo(parametros)
 
-        if self.identificador.lower() != "typeof" and self.identificador.lower() != "length" and\
+        '''if self.identificador.lower() != "typeof" and self.identificador.lower() != "length" and\
             self.identificador.lower() != "round" and self.identificador.lower() != "tolower" and\
             self.identificador.lower() != "toupper" and self.identificador.lower() != "truncate":
             instrucciones = NodoAST("INSTRUCCIONES")
             for instr in self.instrucciones:
                 instrucciones.agregarHijoNodo(instr.getNodo())
             nodo.agregarHijoNodo(instrucciones)
-        
+        '''
         return nodo

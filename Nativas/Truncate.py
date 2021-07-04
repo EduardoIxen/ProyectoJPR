@@ -16,7 +16,7 @@ class Truncate(Funcion):
     
     def interpretar(self, tree, table):
         simbolo = table.getTabla("truncate##Param1")
-        if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de ToLower.", self.fila, self.columna)
+        if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de Truncate.", self.fila, self.columna)
 
         if simbolo.getTipo() != TIPO.DECIMAL and simbolo.getTipo() != TIPO.ENTERO:
             return Excepcion("Semantico", "Parametro de Truncate no es numerico", self.fila, self.columna)
@@ -24,7 +24,10 @@ class Truncate(Funcion):
         self.simbolo = simbolo
         self.tipo = TIPO.ENTERO
 
-        return math.trunc(simbolo.getValor())
+        try:
+            return math.trunc(simbolo.getValor())
+        except:
+            return Excepcion("Semantico", "Parametro de Truncate no es numerico", self.fila, self.columna)
 
     def getNodo(self):
         nodo = NodoAST("TRUNCATE")

@@ -26,7 +26,7 @@ class MainWindow():
         reportMenu = Menu(menuBar, tearoff=0)
         reportMenu.add_command(label="Reporte De Errores", command=self.crearReporteErrores)
         reportMenu.add_command(label="Generar Arbol AST", command=self.crearAST)
-        reportMenu.add_command(label="Tabla De Símbolos")
+        reportMenu.add_command(label="Tabla De Símbolos", command=self.crearReporteTS)
         menuBar.add_cascade(label="Reportes", menu=reportMenu)
         self.root.config(menu=menuBar)
 
@@ -130,6 +130,8 @@ class MainWindow():
 
     def btn_run(self):
         from TS.Excepcion import listaErrores
+        from TS.TablaSimbolos import listaTablaSimbolos
+        listaTablaSimbolos.clear()
         listaErrores.clear()
         entrada = ""
         entrada = self.txt.get("1.0", END)
@@ -292,6 +294,10 @@ class MainWindow():
     def crearReporteErrores(self):
         from Reporte.CrearReporteErrores import CrearReporteErrores
         CrearReporteErrores.crearReporteErrores(None)
+
+    def crearReporteTS(self):
+        from Reporte.CrearReporteTS import CrearReporteTS
+        CrearReporteTS.crearReporteErrores(None)
 
     def crearAST(self):
         import os

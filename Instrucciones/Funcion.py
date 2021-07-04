@@ -1,3 +1,8 @@
+from Instrucciones.DeclaracionArr1 import DeclaracionArr1
+from Instrucciones.While import While
+from Instrucciones.For import For
+from Instrucciones.If import If
+from Instrucciones.Declaracion import Declaracion
 from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
@@ -15,8 +20,10 @@ class Funcion(Instruccion):
         self.fila = fila
         self.columna = columna
         self.tipo = TIPO.NULO
+        self.tabla = None
     
     def interpretar(self, tree, table):
+        self.tabla = table
         nuevaTabla = TablaSimbolos(table) 
         for instruccion in self.instrucciones:      # RECORRE TODAS LAS INSTRUCCIOES QUE TIENE DENTRO
             value = instruccion.interpretar(tree,nuevaTabla) #EJECUTA CADA INSTRUCCION
@@ -52,3 +59,32 @@ class Funcion(Instruccion):
             instrucciones.agregarHijoNodo(instr.getNodo())
         nodo.agregarHijoNodo(instrucciones)
         return nodo
+
+    def getTabla(self,tree,table, padre):
+        from TS.TablaSimbolos import listaTablaSimbolos
+        salida = ""
+        salida += "-¿¿¿Funcion¿¿¿" + str(self.identificador) + "¿¿¿"+ str(self.tipo).replace("TIPO.", "") + "¿¿¿" + str(self.fila) + "¿¿¿"+ str(self.columna)+ "¿¿¿ - &&\n"
+        for instr in self.instrucciones:
+            if isinstance(instr, Declaracion) :
+                salida += str(instr.getTabla(tree,self.tabla,self.identificador))
+            if isinstance(instr, If):
+                salida += str(instr.getTabla(tree,table,self.identificador + " -> If"))
+            if isinstance(instr, For):
+                salida += str(instr.getTabla(tree,table,self.identificador+" -> For"))
+            if isinstance(instr, While):
+                salida += str(instr.getTabla(tree,table,self.identificador+" -> While"))
+            if (isinstance(instr, DeclaracionArr1)):
+                salida += instr.getTabla(tree,table,self.identificador)
+
+        dic = {}
+        dic['Identificador'] = str(self.identificador)
+        dic['Tipo'] = "Funcion"
+        dic['Tipo2'] = "-----"
+        dic['Entorno'] = str(padre)
+        dic['Valor'] = "-----"
+        dic['Fila'] = str(self.fila)
+        dic['Columna'] = str(self.columna)
+        
+        listaTablaSimbolos.append(dic)
+
+        return salida

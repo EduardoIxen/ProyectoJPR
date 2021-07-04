@@ -1,3 +1,6 @@
+
+from Instrucciones.DeclaracionArr1 import DeclaracionArr1
+from Instrucciones.Declaracion import Declaracion
 from Abstract.NodoAST import NodoAST
 from Instrucciones.Continue import Continue
 from Instrucciones.Return import Return
@@ -17,8 +20,10 @@ class For(Instruccion):
         self.instrucciones = instrucciones
         self.fila = fila
         self.columna = columna
+        self.tabla = None
 
     def interpretar(self, tree, table):
+        self.tabla = table
         nuevaTabla = TablaSimbolos(table)  # NUEVO ENTORNO PARA EL FOR
         if self.declasignacion != None:
             declasigna = self.declasignacion.interpretar(tree, nuevaTabla)  # asignacion o declaracion de nueva variable
@@ -66,3 +71,15 @@ class For(Instruccion):
             instrucciones.agregarHijoNodo(instr.getNodo())
         nodo.agregarHijoNodo(instrucciones)
         return nodo
+
+    def getTabla(self,tree,table, padre):
+        from TS.TablaSimbolos import listaTablaSimbolos
+        salida = ""
+        #salida += "-¿¿¿Funcion¿¿¿" + nombre + "¿¿¿"+ nombreFunc  + "¿¿¿" + str(self.fila) + "¿¿¿"+ str(self.columna)+ "¿¿¿ - &&\n"
+        for instr in self.instrucciones:
+            if isinstance(instr, Declaracion) :
+                salida += str(instr.getTabla(tree,self.tabla, padre))
+            if (isinstance(instr, DeclaracionArr1)):
+                salida += instr.getTabla(tree,table, padre)
+        
+        return salida

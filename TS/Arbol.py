@@ -76,3 +76,5 @@ class Arbol:
             self.dot += idPadre + "->" + nombreHijo + ";\n"
             self.contador += 1
             self.recorrerAST(nombreHijo, hijo) 
+
+    

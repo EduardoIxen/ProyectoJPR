@@ -19,14 +19,16 @@ class Length(Funcion):
     
     def interpretar(self, tree, table):
         simbolo = table.getTabla("length##Param1")
-        self.simbolo = simbolo
         if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de length.", self.fila, self.columna)
-
+        self.simbolo = simbolo
         self.tipo = TIPO.ENTERO
         if simbolo.getTipo() == TIPO.CADENA or isinstance(simbolo.getValor(), list):
-            return len(simbolo.getValor())
-
+            try:
+                return len(simbolo.getValor())
+            except:
+                return Excepcion("Semantico", "Parametro de Legnth no es compatible", self.fila, self.columna)
         return Excepcion("Semantico", "Parametro de Legnth no es compatible", self.fila, self.columna)
+
 
     def getNodo(self):
         nodo = NodoAST("LENGTH")

@@ -26,7 +26,10 @@ class ToUpper(Funcion):
         
         self.simbolo = simbolo
         self.tipo = simbolo.getTipo()
-        return simbolo.getValor().upper()
+        try:
+            return simbolo.getValor().upper()
+        except:
+            return Excepcion("Semantico", "Parametro de ToUpper no es cadena", self.fila, self.columna)
 
     def getNodo(self):
         nodo = NodoAST("TOUPPER")

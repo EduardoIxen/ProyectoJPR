@@ -15,6 +15,9 @@ from Instrucciones.Declaracion import Declaracion
 from tkinter.constants import NO
 from TS.Excepcion import Excepcion
 import re
+import sys
+
+sys.setrecursionlimit(3000)
 
 errores = []
 reservadas = {
@@ -495,6 +498,10 @@ def p_parametro(t):
     'parametro : tipo ID'
     t[0] = {'tipo':t[1], 'identificador':t[2]}
 
+def p_parametroArr(t):
+    'parametro : tipo lista_Dim ID'
+    t[0] = {'tipo':TIPO.ARREGLO, 'identificador':t[3], 'tipoArreglo':t[1], 'tamanio':t[2]}
+
 #/////////////////////////////////////// LLAMADA FUNCION //////////////////////////////////////////////////
 
 def p_llamada1(t) :
@@ -756,14 +763,14 @@ def crearNativas(ast):  # CREACION Y DECLARACION DE LAS FUNCIONES NATICAS
     nombre = "round"
     parametros = [{'tipo':TIPO.DECIMAL, 'identificador':'round##Param1'}]
     instrucciones = []
-    trunc = Round(nombre, parametros, instrucciones, -1, -1)
-    ast.addFuncion(trunc)
+    redondear = Round(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(redondear)
 
     nombre = "typeof"
     parametros = [{'tipo':TIPO.NULO, 'identificador':'typeof##Param1'}]
     instrucciones = []
-    trunc = TypeOf(nombre, parametros, instrucciones, -1, -1)
-    ast.addFuncion(trunc)
+    tipoDeDato = TypeOf(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(tipoDeDato)
 
 def ejecutar(entrada, txtConsola):
     from TS.Arbol import Arbol
@@ -828,6 +835,15 @@ def ejecutar(entrada, txtConsola):
                 err = Excepcion("Semantico", "Sentencia fuera de main.", instruccion.fila, instruccion.columna)
                 ast.getExcepciones().append(err)
                 ast.updateConsola(err.toString())
+    taS = ""
+    for instrr in ast.getInstrucciones():
+            if (isinstance(instrr, Declaracion))  :
+                taS += str(instrr.getTabla(ast,TSGlobal,"Global"))
+            if (isinstance(instrr, Funcion)) or (isinstance(instrr, Main)):
+                taS += instrr.getTabla(ast,instrr.tabla,"Global")
+            if (isinstance(instrr, DeclaracionArr1)):
+                taS += instrr.getTabla(ast,TSGlobal,"Global")
+    
 
     init = NodoAST("RAIZ")
     instr = NodoAST("INSTRUCCIONES")
@@ -838,7 +854,7 @@ def ejecutar(entrada, txtConsola):
     init.agregarHijoNodo(instr)
 
     grafo = ast.getDot(init) #DEVUELVE EL CODIGO GRAPHVIZ DEL AST
-
+    
     dirname = os.path.dirname(__file__)
     direcc = os.path.join(dirname, 'Reporte\\ast.dot')
     arch = open(direcc, "w+")

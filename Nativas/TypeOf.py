@@ -15,14 +15,18 @@ class TypeOf(Funcion):
     
     def interpretar(self, tree, table):
         simbolo = table.getTabla("typeof##Param1")  #buscar por el id quemado del parametro de la funcion
-        if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de ToUpper.", self.fila, self.columna)
+        if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de Typeof.", self.fila, self.columna)
         
         self.simbolo = simbolo
-        self.tipo = simbolo.getTipo()
-        if not isinstance(simbolo.getValor(), list):
-            return self.obtenerTipo(simbolo.getTipo())
-        else:
-            return "ARREGLO->"+self.obtenerTipo(simbolo.getTipo())
+        self.tipo = TIPO.CADENA
+        try:
+            if not isinstance(simbolo.getValor(), list):
+                return self.obtenerTipo(simbolo.getTipo())
+            else:
+                return "ARREGLO->"+self.obtenerTipo(simbolo.getTipo())
+        except:
+            return Excepcion("Semantico", "Error al encontrar el tipo de dato.", self.fila, self.columna)
+
 
     def getNodo(self):
         nodo = NodoAST("TYPEOF")

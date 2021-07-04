@@ -16,6 +16,7 @@ class DeclaracionArr1(Instruccion):
         self.fila = fila
         self.columna = columna
         self.arreglo = True
+        self.valor = "null"
 
 
     def interpretar(self, tree, table):
@@ -27,6 +28,7 @@ class DeclaracionArr1(Instruccion):
         # CREACION DEL ARREGLO
         value = self.crearDimensiones(tree, table, copy.copy(self.expresiones))     #RETORNA EL ARREGLO DE DIMENSIONES
         if isinstance(value, Excepcion): return value
+        self.valor = value
         simbolo = Simbolo(str(self.identificador), self.tipo, self.arreglo, self.fila, self.columna, value)
         result = table.setTabla(simbolo)
         if isinstance(result, Excepcion): return result
@@ -59,3 +61,20 @@ class DeclaracionArr1(Instruccion):
             contador += 1
         return arr
 
+    def getTabla(self,tree,table, padre):
+        from TS.TablaSimbolos import listaTablaSimbolos
+        salida = ""
+        salida += "-¿¿¿Declaracion¿¿¿" + self.identificador + "¿¿¿"+ str(self.tipo)  + "¿¿¿" + str(self.fila) + "¿¿¿"+ str(self.columna)+ "¿¿¿ - &&\n"
+
+        dic = {}
+        dic['Identificador'] = str(self.identificador)
+        dic['Tipo'] = "Variable"
+        dic['Tipo2'] = str(self.tipo).replace("TIPO.", "ARREGLO->")
+        dic['Entorno'] = str(padre)
+        dic['Valor'] = str(self.valor)
+        dic['Fila'] = str(self.fila)
+        dic['Columna'] = str(self.columna)
+        
+        listaTablaSimbolos.append(dic)
+        
+        return salida

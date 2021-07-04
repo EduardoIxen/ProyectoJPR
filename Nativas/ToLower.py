@@ -26,7 +26,10 @@ class Tolower(Funcion):
             return Excepcion("Semantico", "Parametro de ToLower no es cadena", self.fila, self.columna)
         
         self.tipo = simbolo.getTipo()
-        return simbolo.getValor().lower()
+        try:
+            return simbolo.getValor().lower()
+        except:
+            return Excepcion("Semantico", "Parametro de ToLower no es cadena", self.fila, self.columna)
 
     def getNodo(self):
         nodo = NodoAST("TOLOWER")

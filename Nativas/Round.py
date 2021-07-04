@@ -16,14 +16,17 @@ class Round(Funcion):
     
     def interpretar(self, tree, table):
         simbolo = table.getTabla("round##Param1")
-        if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de ToLower.", self.fila, self.columna)
+        if simbolo == None: return Excepcion("Semantico", "No se encontro parametro de Round.", self.fila, self.columna)
 
         self.simbolo = simbolo
         if simbolo.getTipo() != TIPO.DECIMAL and simbolo.getTipo() != TIPO.ENTERO:
-            return Excepcion("Semantico", "Parametro de Truncate no es numerico", self.fila, self.columna)
+            return Excepcion("Semantico", "Parametro de Round no es numerico", self.fila, self.columna)
         
         self.tipo = TIPO.ENTERO
-        return int(self.roundNum(simbolo.getValor()))
+        try:
+            return int(self.roundNum(simbolo.getValor()))
+        except:
+            return Excepcion("Semantico", "Parametro de Round no es numerico", self.fila, self.columna)
 
     def getNodo(self):
         nodo = NodoAST("ROUND")
