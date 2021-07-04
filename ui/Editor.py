@@ -52,6 +52,9 @@ class ScrollText(tk.Frame):
     def delete(self, *args, **kwargs):
         return self.text.delete(*args, **kwargs)
 
+    def see(self, *args):
+        return self.text.see("end")
+
     def index(self, *args, **kwargs):
         return self.text.index(*args, **kwargs)
 

@@ -139,6 +139,7 @@ class MainWindow():
         salidaConsola = ejecutar(entrada, self.textConsola)
         self.textConsola.delete("1.0", END)
         self.textConsola.insert("1.0", salidaConsola)
+        self.textConsola.see("end")
 
     def recorrerEntrada(self, entrada):  #RECORRER ENTRADA PARA PINTAR
         #entrada = entrada + " "
