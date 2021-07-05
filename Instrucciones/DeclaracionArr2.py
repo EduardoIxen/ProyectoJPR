@@ -18,10 +18,10 @@ class DeclaracionArr2(Instruccion):
 
 
     def interpretar(self, tree, table):
-        print("tipo->",self.tipo)
-        print("dimen-> ", self.dimensiones)
-        print("id", self.identificador)
-        print("expresiones", self.expresiones)
+        #print("tipo->",self.tipo)
+        #print("dimen-> ", self.dimensiones)
+        #print("id", self.identificador)
+        #print("expresiones", self.expresiones)
         temp = self.expresiones
         #for tp in temp:
         #    print(tp.valor)
@@ -30,7 +30,7 @@ class DeclaracionArr2(Instruccion):
         simbolo = Simbolo(str(self.identificador), self.tipo, self.arreglo, self.fila, self.columna, value)
         result = table.setTabla(simbolo)
         if isinstance(result, Excepcion): return result
-        print("nada")
+
         return None
 
     def getNodo(self):

@@ -45,7 +45,7 @@ class CrearReporteTS:
         path1 = path1.replace("\\", "/")
         path1 = path1.replace("../", "")
 
-        file = open(path1, "w")
+        file = open(path1, "w", encoding="utf-8")
 
         file.write('<!DOCTYPE html>')
         file.write('<html>')
@@ -64,7 +64,7 @@ class CrearReporteTS:
         file.write('</head>')
         file.write('<body>')
         file.write('<center>')
-        file.write(f'<h1>Reportes de errores</h1>')
+        file.write(f'<h1>Tabla de simbolos</h1>')
         file.write(contenidoTabla)
         if listaTablaSimbolos == []:
             file.write(f'<h1>NO HAY SIMBOLOS D:</h1>')

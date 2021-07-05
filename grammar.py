@@ -862,7 +862,7 @@ def ejecutar(entrada, txtConsola):
     
     dirname = os.path.dirname(__file__)
     direcc = os.path.join(dirname, 'Reporte\\ast.dot')
-    arch = open(direcc, "w+")
+    arch = open(direcc, "w+", encoding="utf-8")
     arch.write(grafo)
     arch.close()
     os.system('dot -T pdf -o Reporte/ast.pdf Reporte/ast.dot')

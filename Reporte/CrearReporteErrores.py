@@ -42,7 +42,7 @@ class CrearReporteErrores:
         path1 = path1.replace("\\", "/")
         path1 = path1.replace("../", "")
 
-        file = open(path1, "w")
+        file = open(path1, "w", encoding="utf-8")
 
         file.write('<!DOCTYPE html>')
         file.write('<html>')

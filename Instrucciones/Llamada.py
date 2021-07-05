@@ -46,9 +46,7 @@ class Llamada(Instruccion):
                     resultTabla = nuevaTabla.setTabla(simbolo)
                     if isinstance(resultTabla, Excepcion): return resultTabla
                 elif (result.parametros[contador]['tipo'] == TIPO.ARREGLO and isinstance(resultExpresion, list)):
-                    print("si es arreglo")
                     if (result.parametros[contador]['tipoArreglo'] == expresion.tipo):
-                        print("mismo tipo dato")
                         simbolo = Simbolo(str(result.parametros[contador]['identificador']).lower(), result.parametros[contador]['tipoArreglo'], True, self.fila, self.columna, resultExpresion)
                         resultTabla = nuevaTabla.setTabla(simbolo)
                         if isinstance(resultTabla, Excepcion): return resultTabla

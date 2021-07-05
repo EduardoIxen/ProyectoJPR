@@ -98,7 +98,7 @@ class MainWindow():
         self.fileName = filedialog.askopenfilename(
             title="Seleccionar archivo", initialdir="./", filetypes=(("All Files", "*.*"), (".jpr", "*.jpr")))
         if self.fileName != "":
-            file = open(self.fileName, "r")
+            file = open(self.fileName, "r", encoding="utf-8")
             content = file.read()
             self.txt.delete("1.0", END)
             for s in self.recorrerEntrada(content):
@@ -109,7 +109,7 @@ class MainWindow():
         guardar = filedialog.asksaveasfilename(
             title="Guardar Archivo", initialdir="C:/", filetypes=(("Archivo jpr", "*.jpr"), ("rmt files", "*.rmt")))
         print("guaradasd ", guardar)
-        fguardar = open(guardar, "w")
+        fguardar = open(guardar, "w", encoding="utf-8")
         fguardar.write(self.txt.get(1.0, END))
         fguardar.close()
         self.fileName = guardar
@@ -119,7 +119,7 @@ class MainWindow():
             guardar = filedialog.asksaveasfilename(
                 title="Guardar Archivo", initialdir="C:/", filetypes=((".jpr", "*.jpr"), ("rmt files", "*.rmt")))
             print("guaradasd ", guardar)
-            fguardar = open(guardar, "w")
+            fguardar = open(guardar, "w", encoding="utf-8")
             fguardar.write(self.txt.get(1.0, END))
             fguardar.close()
             self.fileName = guardar
@@ -154,7 +154,6 @@ class MainWindow():
                     l = []
                     l.append("variable")
                     l.append(val)
-                    print("primer if",l)
                     lista.append(l)
                     val = ''
                     val = "$"
@@ -285,7 +284,7 @@ class MainWindow():
             if s[1] == 'int' or s[1] == 'double' or s[1] == 'boolean' or s[1] == 'char' or s[1] == 'string' or\
                 s[1] == 'null' or s[1] == 'print' or s[1] == 'true' or s[1] == 'false' or s[1] == 'var' or s[1] == 'if' or\
                 s[1] == 'else' or [1] == 'switch' or s[1] == 'case' or s[1] == 'default' or s[1] == 'while' or s[1] == 'for' or\
-                s[1] == "break" or s[1]=="main":
+                s[1] == "break" or s[1]=="main" or s[1]=="new" or s[1]=="read" or s[1]=="continue" or s[1]=="return":
                 s[0] = 'reservada'
             elif s[1][0] != "$":
                 if s[0] == 'variable':
@@ -307,5 +306,4 @@ class MainWindow():
         path = os.path.join(my_path, f"Reporte\\ast.pdf")
         path = path.replace("\\ui", "")
         path = path.replace("\\", "/")
-        print(path)
         webbrowser.open_new_tab(path)
