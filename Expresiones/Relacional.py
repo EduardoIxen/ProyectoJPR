@@ -72,6 +72,10 @@ class Relacional(Instruccion):
                 return str(self.obtenerVal(self.OperacionIzq.tipo, izq)).lower() != str(self.obtenerVal(self.OperacionDer.tipo, der)).lower()
             elif self.OperacionIzq.tipo == TIPO.CADENA and self.OperacionDer.tipo == TIPO.CADENA:
                 return self.obtenerVal(self.OperacionIzq.tipo, izq) != self.obtenerVal(self.OperacionDer.tipo, der)
+            elif self.OperacionIzq.tipo == TIPO.NULO:
+                return str(self.obtenerVal(self.OperacionDer.tipo, der)) != "null"
+            elif self.OperacionDer.tipo == TIPO.NULO:
+                return str(self.obtenerVal(self.OperacionIzq.tipo, izq)) != "null"
             return Excepcion("Semantico", f"Error en la comparacion de {str(izq)} ({self.OperacionIzq.tipo}) y {str(der)}({self.OperacionDer.tipo}).", self.fila, self.columna)
         
         elif self.operador == OperadorRelacional.MENORQUE: ############# MENOR QUE #######################
@@ -132,6 +136,8 @@ class Relacional(Instruccion):
         return nodo
 
     def obtenerVal(self, tipo, val):
+        if(str(val).lower()=="null"):
+            return "null"
         if tipo == TIPO.ENTERO:
             return int(val)
         elif tipo == TIPO.DECIMAL:

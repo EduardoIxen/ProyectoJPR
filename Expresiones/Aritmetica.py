@@ -56,6 +56,13 @@ class Aritmetica(Instruccion):
             elif self.OperacionIzq.tipo == TIPO.CHARACTER and self.OperacionDer.tipo == TIPO.CHARACTER:
                 self.tipo = TIPO.CADENA
                 return str(self.obtenerVal(self.OperacionIzq.tipo, izq)) + str(self.obtenerVal(self.OperacionDer.tipo, der))
+            elif self.OperacionIzq.tipo == TIPO.NULO:
+                self.tipo = TIPO.CADENA
+                return "null" + str(self.obtenerVal(self.OperacionDer.tipo, der))
+            elif self.OperacionDer.tipo == TIPO.NULO:
+                self.tipo = TIPO.CADENA
+                return str(self.obtenerVal(self.OperacionIzq.tipo, izq)) + "null"
+            
             return Excepcion("Semantico", f"Error: No se pueden sumar los datos {str(izq)} ({self.OperacionIzq.tipo}) y {str(der)}({self.OperacionDer.tipo}).", self.fila, self.columna)
 
         elif self.operador == OperadorAritmetico.MENOS: #################################### RESTA ############################
@@ -158,6 +165,8 @@ class Aritmetica(Instruccion):
         return nodo
 
     def obtenerVal(self, tipo, val):
+        if(str(val).lower() == "null"):
+            return "null"
         if tipo == TIPO.ENTERO:
             return int(val)
         elif tipo == TIPO.DECIMAL:

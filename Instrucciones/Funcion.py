@@ -1,3 +1,4 @@
+from Instrucciones.DeclaracionReferencia import DeclaracionReferencia
 from Instrucciones.DeclaracionArr1 import DeclaracionArr1
 from Instrucciones.While import While
 from Instrucciones.For import For
@@ -75,6 +76,8 @@ class Funcion(Instruccion):
                 salida += str(instr.getTabla(tree,table,self.identificador+" -> While"))
             if (isinstance(instr, DeclaracionArr1)):
                 salida += instr.getTabla(tree,table,self.identificador)
+            if (isinstance(instr, DeclaracionReferencia)):
+                salida += instr.getTabla(tree,table, padre)
 
         dic = {}
         dic['Identificador'] = str(self.identificador)

@@ -235,6 +235,7 @@ from Instrucciones.DeclaracionArr1 import DeclaracionArr1
 from Instrucciones.DeclaracionArr2 import DeclaracionArr2
 from Instrucciones.ModificarArreglo import ModificarArreglo
 from Expresiones.AccesoArreglo import AccesoArreglo
+from Instrucciones.DeclaracionReferencia import DeclaracionReferencia
 
 def p_init(t) :
     'init            : instrucciones'
@@ -317,6 +318,10 @@ def p_declArr(t):
 def p_tipo1(t):
     'tipo1 : tipo lista_Dim ID IGUAL RNEW tipo lista_expresiones'
     t[0] = DeclaracionArr1(t[1], t[2], t[3], t[6], t[7], t.lineno(3), find_column(input, t.slice[3]))
+
+def p_tipo1Id(t):
+    'tipo1 : tipo lista_Dim ID IGUAL ID'
+    t[0] = DeclaracionReferencia(t[1], t[2], t[3], t[5], t.lineno(3), find_column(input, t.slice[3]))
 
 def p_lista_Dim1(t):
     'lista_Dim : lista_Dim CORA CORC'

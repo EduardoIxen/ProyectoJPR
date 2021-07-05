@@ -1,3 +1,4 @@
+from Instrucciones.DeclaracionReferencia import DeclaracionReferencia
 from Instrucciones.Case import Case
 from Instrucciones.DeclaracionArr1 import DeclaracionArr1
 from Instrucciones.While import While
@@ -67,6 +68,8 @@ class Main(Instruccion):
                 salida += instr.getTabla(tree,table,"Main")
             if (isinstance(instr, Switch)):
                 salida += instr.getTabla(tree, table, "Main->Switch")
+            if (isinstance(instr, DeclaracionReferencia)):
+                salida += instr.getTabla(tree,table, padre)
 
         dic = {}
         dic['Identificador'] = str(self.identificador)

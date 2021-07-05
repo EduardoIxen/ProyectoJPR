@@ -1,4 +1,5 @@
 
+from Instrucciones.DeclaracionReferencia import DeclaracionReferencia
 from Instrucciones.DeclaracionArr1 import DeclaracionArr1
 from Instrucciones.While import While
 from Instrucciones.For import For
@@ -86,12 +87,16 @@ class If(Instruccion):
                 salida += str(instr.getTabla(tree,self.tabla, padre))
             if (isinstance(instr, DeclaracionArr1)):
                 salida += instr.getTabla(tree,table, padre)
+            if (isinstance(instr, DeclaracionReferencia)):
+                salida += instr.getTabla(tree,table, padre)
 
         if self.instruccionesElse != None:
             for instr in self.instruccionesElse:
                 if isinstance(instr, Declaracion) :
                     salida += str(instr.getTabla(tree,self.tabla, padre))
                 if (isinstance(instr, DeclaracionArr1)):
+                    salida += instr.getTabla(tree,table, padre)
+                if (isinstance(instr, DeclaracionReferencia)):
                     salida += instr.getTabla(tree,table, padre)
         
         if self.elseIf != None:

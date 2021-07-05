@@ -1,4 +1,5 @@
 
+from Instrucciones.DeclaracionReferencia import DeclaracionReferencia
 from Instrucciones.DeclaracionArr1 import DeclaracionArr1
 from Instrucciones.Declaracion import Declaracion
 from Abstract.NodoAST import NodoAST
@@ -80,6 +81,8 @@ class For(Instruccion):
             if isinstance(instr, Declaracion) :
                 salida += str(instr.getTabla(tree,self.tabla, padre))
             if (isinstance(instr, DeclaracionArr1)):
+                salida += instr.getTabla(tree,table, padre)
+            if (isinstance(instr, DeclaracionReferencia)):
                 salida += instr.getTabla(tree,table, padre)
         
         return salida

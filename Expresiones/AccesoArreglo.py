@@ -29,8 +29,8 @@ class AccesoArreglo(Instruccion):
         # BUSQUEDA DEL ARREGLO
         value = self.buscarDimensiones(tree, table, copy.copy(self.expresiones), simbolo.getValor())     #RETORNA EL VALOR SOLICITADO
         if isinstance(value, Excepcion): return value
-        if isinstance(value, list):
-            return Excepcion("Semantico", "Acceso a Arreglo incompleto.", self.fila, self.columna)
+        #if isinstance(value, list):
+        #    return Excepcion("Semantico", "Acceso a Arreglo incompleto.", self.fila, self.columna)
 
         return value
 
